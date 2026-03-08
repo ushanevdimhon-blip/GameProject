@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36908.2
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameProject", "GameProject.csproj", "{632755B3-56C2-4D97-BEE5-FAD7A65CAF7F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MonoGameLibrary", "..\ProjectGameLibrary\MonoGameLibrary.csproj", "{C1E1839B-33C0-4C07-828C-0AE8C38B4947}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{632755B3-56C2-4D97-BEE5-FAD7A65CAF7F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{632755B3-56C2-4D97-BEE5-FAD7A65CAF7F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{632755B3-56C2-4D97-BEE5-FAD7A65CAF7F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{632755B3-56C2-4D97-BEE5-FAD7A65CAF7F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C1E1839B-33C0-4C07-828C-0AE8C38B4947}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C1E1839B-33C0-4C07-828C-0AE8C38B4947}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C1E1839B-33C0-4C07-828C-0AE8C38B4947}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C1E1839B-33C0-4C07-828C-0AE8C38B4947}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {8253B236-E602-42A7-B98A-A7B2C7305E34}
+	EndGlobalSection
+EndGlobal

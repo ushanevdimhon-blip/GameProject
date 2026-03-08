@@ -7,6 +7,9 @@ namespace GameProject
 {
     public class Game1 : Core
     {
+        // The MonoGame logo texture
+        private Texture2D _logo;
+
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
 
@@ -24,6 +27,7 @@ namespace GameProject
 
         protected override void LoadContent()
         {
+            _logo = Content.Load<Texture2D>("images/logo");
             base.LoadContent();
         }
 
@@ -42,6 +46,15 @@ namespace GameProject
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
             // TODO: Add your drawing code here
+
+            // Begin the sprite batch to prepare for rendering.
+            SpriteBatch.Begin();
+
+            // Draw the logo texture
+            SpriteBatch.Draw(_logo, Vector2.Zero, Color.White);
+
+            // Always end the sprite batch when finished.
+            SpriteBatch.End();
 
             base.Draw(gameTime);
         }

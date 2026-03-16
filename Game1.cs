@@ -10,7 +10,9 @@ namespace GameProject
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
         private Player player;
+        private Enemy enemy;
         private Texture2D playerTexture;
+        private Texture2D enemyTexture;
 
         public Game1()
         {
@@ -30,7 +32,9 @@ namespace GameProject
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
             playerTexture = Content.Load<Texture2D>("Images/5053745_0");
-            player = new Player(playerTexture, 0, 0);     
+            player = new Player(playerTexture, 0, 0);
+            enemyTexture = Content.Load<Texture2D>("Images/vecteezy_angry-face-emoji-png-file_11997334");
+            enemy = new Enemy(enemyTexture);
         }
 
         protected override void Update(GameTime gameTime)
@@ -39,6 +43,7 @@ namespace GameProject
                 Exit();
 
             player.Update();
+            enemy.Update();
 
             base.Update(gameTime);
         }
@@ -51,6 +56,7 @@ namespace GameProject
             _spriteBatch.Begin();
 
             player.Draw(_spriteBatch);
+            enemy.Draw(_spriteBatch);
 
             _spriteBatch.End();
 

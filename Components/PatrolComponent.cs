@@ -8,5 +8,9 @@ namespace GameProject.Components
 {
     public class PatrolComponent
     {
+        public void Patrol(PositionComponent positionComponent)
+        {
+            
+        }
     }
 }

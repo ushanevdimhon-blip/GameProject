@@ -17,7 +17,7 @@ namespace GameProject
         public Player(Texture2D model, float x, float y)
         {
             position = new PositionComponent(x, y);
-            render = new RenderComponent(model);
+            render = new RenderComponent(model, 0.1f);
             input = new InputComponent();
         }
 

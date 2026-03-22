@@ -1,6 +1,8 @@
 ﻿using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.Design;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,7 +15,7 @@ namespace GameProject.Components
         public Action OnDown;
         public Action OnRight;
         public Action OnLeft;
-        int stamina = 100;
+        uint stamina = 10;
 
         public void Update(PositionComponent positionComponent)
         {
@@ -23,32 +25,36 @@ namespace GameProject.Components
 
             var velocity = isSprinting ? 4 : 2;
 
-            if (isSprinting)
+            if (isSprinting && stamina == 0)
+                stamina = 0;
+            else if (isSprinting)
                 stamina--;
             else
                 stamina++;
 
+            Debug.WriteLine(stamina.ToString());
+
             if (key.IsKeyDown(Keys.W))
             {
-                positionComponent.y -= 1 * (stamina <= 0 ? 2 : velocity);
+                positionComponent.y -= 1 * (stamina == 0 ? 2 : velocity);
                 //OnUp();
             }
                 
             if (key.IsKeyDown(Keys.S))
             {
-                positionComponent.y += 1 * (stamina <= 0 ? 2 : velocity);
+                positionComponent.y += 1 * (stamina == 0 ? 2 : velocity);
                 //OnDown();
             }
                 
             if (key.IsKeyDown(Keys.D))
             {
-                positionComponent.x += 1 * (stamina <= 0 ? 2 : velocity);
+                positionComponent.x += 1 * (stamina == 0 ? 2 : velocity);
                 //OnRight();
             }
                 
             if (key.IsKeyDown(Keys.A))
             {
-                positionComponent.x -= 1 * (stamina <= 0 ? 2 : velocity);
+                positionComponent.x -= 1 * (stamina == 0 ? 2 : velocity);
                 //OnLeft();
             }        
         }

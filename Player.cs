@@ -13,12 +13,14 @@ namespace GameProject
         PositionComponent position;
         RenderComponent render;
         InputComponent input;
+        public int Health {  get; private set; }
 
         public Player(Texture2D model, float x, float y)
         {
             position = new PositionComponent(x, y);
             render = new RenderComponent(model, 0.1f);
             input = new InputComponent();
+            Health = 100;
         }
 
         public void Update()

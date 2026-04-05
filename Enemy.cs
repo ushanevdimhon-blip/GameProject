@@ -19,11 +19,17 @@ namespace GameProject
         PositionComponent currentPosition;
         MoveComponent moveComponent;
         PatrolComponent patrol;
-        public Rectangle collisionRectangle;
+        public CollisionComponent collision;
 
         float width;
         float height;
+        /// <summary>
+        /// ширина модели умноженная на масштаб
+        /// </summary>
         public float Width { get { return width; } private set { width = value; } }
+        /// <summary>
+        /// высота модели умноженная на масштаб
+        /// </summary>
         public float Height { get { return height; } private set { height = value; } }
 
         public Enemy(Texture2D model, float scale)
@@ -33,17 +39,17 @@ namespace GameProject
             this.height = model.Height* scale;
             random = new Random();
             render = new RenderComponent(model, scale);
-            currentPosition = new PositionComponent((float)random.NextDouble()*500, (float)random.NextDouble() * 500);
+            currentPosition = new PositionComponent((float)random.NextDouble()*200, (float)random.NextDouble() * 200);
             moveComponent = new MoveComponent(currentPosition);
             patrol = new PatrolComponent(moveComponent, currentPosition);
+            collision = new CollisionComponent(currentPosition, this.width, this.height);   
         }
 
         public void Update()
         {
             previousPosition = new PositionComponent(currentPosition.X, currentPosition.Y);
             //patrol.Patrol();
-            collisionRectangle = new Rectangle((int)currentPosition.X,
-                (int)currentPosition.Y, (int)Width, (int)Height);
+            collision.Update();
         }
 
         public void Draw(SpriteBatch spriteBatch)

@@ -14,7 +14,8 @@ namespace GameProject
         private Enemy enemy;
         private Texture2D playerTexture;
         private Texture2D enemyTexture;
-        CollisionComponent collisions;
+        CollisionComponent screenCollision;
+        Rectangle screenBounds;
 
         public Game1()
         {
@@ -32,14 +33,18 @@ namespace GameProject
 
         protected override void LoadContent()
         {
+            screenBounds = new Rectangle(
+                0,
+                0,
+                GraphicsDevice.PresentationParameters.BackBufferWidth,
+                GraphicsDevice.PresentationParameters.BackBufferHeight
+            );
+            screenCollision = new CollisionComponent(screenBounds);
             _spriteBatch = new SpriteBatch(GraphicsDevice);
             playerTexture = Content.Load<Texture2D>("Images/5053745_0");
             player = new Player(playerTexture, 0, 0, 0.1f);
             enemyTexture = Content.Load<Texture2D>("Images/vecteezy_angry-face-emoji-png-file_11997334");
-            enemy = new Enemy(enemyTexture, 0.03f);
-            collisions = new CollisionComponent();
-            collisions.CollisionActions += player.Block;
-            collisions.CollisionActions += enemy.Block;
+            enemy = new Enemy(enemyTexture, 0.03f);          
         }
 
         protected override void Update(GameTime gameTime)
@@ -49,8 +54,10 @@ namespace GameProject
 
             player.Update();
             enemy.Update();
-            collisions.CheckCollision(player.collisionRectangle, enemy.collisionRectangle);
-
+            if (CheckCollision(player.collision, enemy.collision))
+                player.Block();
+            GetScreenCollision(player.collision);
+            GetScreenCollision(enemy.collision);
             base.Update(gameTime);
         }
 
@@ -67,6 +74,36 @@ namespace GameProject
             _spriteBatch.End();
 
             base.Draw(gameTime);
+        }
+
+        public bool CheckCollision(CollisionComponent collision1, CollisionComponent collision2)
+        {
+            if (collision1.collisionRectangle.Intersects(collision2.collisionRectangle))
+            {
+                return true;
+            }
+            return false;
+        }
+        //по сути этот метод может подойти и для стен, чтобы при беге персонаж облизывал текстуры, а не липнул к ним
+        public void GetScreenCollision(CollisionComponent collisionObject)
+        {
+            if (collisionObject.collisionRectangle.Left < screenBounds.Left)
+            {
+                player.currentPosition.X = screenBounds.Left;
+            }
+            else if (collisionObject.collisionRectangle.Right > screenBounds.Right)
+            {
+                collisionObject.currentPosition.X = screenBounds.Right - collisionObject.width;
+            }
+
+            if (collisionObject.collisionRectangle.Top < screenBounds.Top)
+            {
+                collisionObject.currentPosition.Y = screenBounds.Top;
+            }
+            else if (collisionObject.collisionRectangle.Bottom > screenBounds.Bottom)
+            {
+                collisionObject.currentPosition.Y = screenBounds.Bottom - collisionObject.height;
+            }
         }
     }
 }

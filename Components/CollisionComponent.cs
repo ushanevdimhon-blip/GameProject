@@ -9,15 +9,29 @@ namespace GameProject.Components
 {
     public class CollisionComponent
     {
-        public Action CollisionActions;
+        public Rectangle collisionRectangle;
+        public float width;
+        public float height;
+        public PositionComponent currentPosition;
 
-        public void CheckCollision(Rectangle rectangle1, Rectangle rectangle2)
+        public CollisionComponent(PositionComponent currentPosition, float width, float height)
         {
+            this.width = width;
+            this.height = height;
+            this.currentPosition = currentPosition;
+            collisionRectangle = new Rectangle((int)currentPosition.X,
+                (int)currentPosition.Y, (int)width, (int)height);
+        }
 
-            if (rectangle1.Intersects(rectangle2))
-            {
-                CollisionActions.Invoke();
-            }
+        public CollisionComponent(Rectangle collisionRectangle)
+        {
+            this.collisionRectangle = collisionRectangle;
+        }
+
+        public void Update()
+        {
+            collisionRectangle = new Rectangle((int)currentPosition.X,
+                (int)currentPosition.Y, (int)width, (int)height);
         }
     }
 }

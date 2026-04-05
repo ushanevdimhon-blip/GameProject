@@ -13,25 +13,33 @@ namespace GameProject
     {
         Texture2D model;
         PositionComponent previousPosition;
-        PositionComponent currentPosition;
+        public PositionComponent currentPosition;
         RenderComponent render;
         InputComponent input;
-        public Rectangle collisionRectangle;
+        public CollisionComponent collision;
 
-        float wigth;
+        float width;
         float height;
-        public float Width { get { return wigth; } private set { wigth = value; } }
+        /// <summary>
+        /// ширина модели умноженная на масштаб
+        /// </summary>
+        public float Width { get { return width; } private set { width = value; } }
+        /// <summary>
+        /// высота модели умноженная на масштаб
+        /// </summary>
         public float Height { get { return height; } private set { height = value; } }
         public int Health {  get; private set; }
 
         public Player(Texture2D model, float x, float y, float scale)
         {
             this.model = model;
-            this.wigth = model.Width * scale;
+            this.width = model.Width * scale;
             this.height = model.Height * scale;
             currentPosition = new PositionComponent(x, y);
             render = new RenderComponent(model, scale);
             input = new InputComponent();
+            collision = new CollisionComponent(currentPosition, this.width, this.height);
+            
             Health = 100;
         }
 
@@ -39,8 +47,7 @@ namespace GameProject
         {
             previousPosition = new PositionComponent(currentPosition.X, currentPosition.Y);
             input.Update(currentPosition);
-            collisionRectangle = new Rectangle((int)currentPosition.X,
-                (int)currentPosition.Y, (int)Width, (int)Height);
+            collision.Update();
         }
 
         public void Draw(SpriteBatch spriteBatch)

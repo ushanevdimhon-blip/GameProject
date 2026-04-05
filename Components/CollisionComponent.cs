@@ -11,7 +11,6 @@ namespace GameProject.Components
     {
         public Action CollisionActions;
 
-
         public void CheckCollision(Rectangle rectangle1, Rectangle rectangle2)
         {
 

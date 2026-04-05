@@ -48,7 +48,7 @@ namespace GameProject
             render.Draw(spriteBatch, currentPosition);
         }
         /// <summary>
-        /// останавливает игрока, нужен для коллизий
+        /// останавливает объект, нужен для коллизий
         /// </summary>
         public void Block()
         {

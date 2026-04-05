@@ -17,22 +17,22 @@ namespace GameProject.Components
 
         public void MoveForward()
         {
-            positionComponent.y -= 1.5f;
+            positionComponent.Y -= 1.5f;
         }
 
         public void MoveBackward()
         {
-            positionComponent.y += 1.5f;
+            positionComponent.Y += 1.5f;
         }
 
         public void MoveRight()
         {
-            positionComponent.x += 1.5f;
+            positionComponent.X += 1.5f;
         }
 
         public void MoveLeft()
         {
-            positionComponent.x -= 1.5f;
+            positionComponent.X -= 1.5f;
         }
     }
 }

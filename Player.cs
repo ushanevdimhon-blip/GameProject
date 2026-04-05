@@ -10,6 +10,7 @@ namespace GameProject
 {
     public class Player
     {
+        public Texture2D model;
         public PositionComponent previousPosition;
         public PositionComponent currentPosition;
         public RenderComponent render;
@@ -22,6 +23,7 @@ namespace GameProject
 
         public Player(Texture2D model, float x, float y, float scale)
         {
+            this.model = model;
             this.wigth = model.Width * scale;
             this.height = model.Height * scale;
             currentPosition = new PositionComponent(x, y);
@@ -32,7 +34,7 @@ namespace GameProject
 
         public void Update()
         {
-            previousPosition = new PositionComponent(currentPosition.x, currentPosition.y);
+            previousPosition = new PositionComponent(currentPosition.X, currentPosition.Y);
             input.Update(currentPosition);
         }
 
@@ -43,8 +45,8 @@ namespace GameProject
 
         public void Block()
         {
-            currentPosition.x = previousPosition.x;
-            currentPosition.y = previousPosition.y;
+            currentPosition.X = previousPosition.X;
+            currentPosition.Y = previousPosition.Y;
         }
     }
 }

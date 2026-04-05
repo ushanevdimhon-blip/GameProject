@@ -15,10 +15,10 @@ namespace GameProject.Components
 
         public void CheckCollision(Player object1, Enemy object2)
         {
-            object1Bounds = new Rectangle((int)object1.currentPosition.x, 
-                (int)object1.currentPosition.y, (int)object1.Wigth, (int)object1.Height);
-            object2Bounds = new Rectangle((int)object2.currentPosition.x, 
-                (int)object2.currentPosition.y, (int)object2.Wigth, (int)object2.Height);
+            object1Bounds = new Rectangle((int)object1.currentPosition.X, 
+                (int)object1.currentPosition.Y, (int)object1.Wigth, (int)object1.Height);
+            object2Bounds = new Rectangle((int)object2.currentPosition.X, 
+                (int)object2.currentPosition.Y, (int)object2.Wigth, (int)object2.Height);
 
             if (object1Bounds.IntersectsWith(object2Bounds))
             {

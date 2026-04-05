@@ -11,6 +11,7 @@ namespace GameProject
 {
     public class Enemy
     {
+        public Texture2D model;
         Random random;
         RenderComponent render;
         public PositionComponent previousPosition;
@@ -24,6 +25,7 @@ namespace GameProject
 
         public Enemy(Texture2D model, float scale)
         {
+            this.model = model;
             this.wigth = model.Width* scale;
             this.height = model.Height* scale;
             random = new Random();
@@ -35,7 +37,7 @@ namespace GameProject
 
         public void Update()
         {
-            previousPosition = new PositionComponent(currentPosition.x, currentPosition.y);
+            previousPosition = new PositionComponent(currentPosition.X, currentPosition.Y);
             //patrol.Patrol();
         }
 
@@ -46,8 +48,8 @@ namespace GameProject
 
         public void Block()
         {
-            currentPosition.x = previousPosition.x;
-            currentPosition.y = previousPosition.y;
+            currentPosition.X = previousPosition.X;
+            currentPosition.Y = previousPosition.Y;
         }
     }
 }

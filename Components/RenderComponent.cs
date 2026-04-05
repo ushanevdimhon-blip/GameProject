@@ -21,7 +21,7 @@ namespace GameProject.Components
 
         public void Draw(SpriteBatch spriteBatch, PositionComponent positionComponent)
         {
-            spriteBatch.Draw(model, new Vector2(positionComponent.x, positionComponent.y), null, Color.White, 
+            spriteBatch.Draw(model, new Vector2(positionComponent.X, positionComponent.Y), null, Color.White, 
                 0.0f, Vector2.Zero, scale, SpriteEffects.None, 0.0f);
         }
     }

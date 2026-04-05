@@ -10,27 +10,41 @@ namespace GameProject
 {
     public class Player
     {
-        PositionComponent position;
-        RenderComponent render;
-        InputComponent input;
+        public PositionComponent previousPosition;
+        public PositionComponent currentPosition;
+        public RenderComponent render;
+        public InputComponent input;
+        float wigth;
+        float height;
+        public float Wigth { get { return wigth; } private set { wigth = value; } }
+        public float Height { get { return height; } private set { height = value; } }
         public int Health {  get; private set; }
 
-        public Player(Texture2D model, float x, float y)
+        public Player(Texture2D model, float x, float y, float scale)
         {
-            position = new PositionComponent(x, y);
-            render = new RenderComponent(model, 0.1f);
+            this.wigth = model.Width * scale;
+            this.height = model.Height * scale;
+            currentPosition = new PositionComponent(x, y);
+            render = new RenderComponent(model, scale);
             input = new InputComponent();
             Health = 100;
         }
 
         public void Update()
         {
-            input.Update(position);
+            previousPosition = new PositionComponent(currentPosition.x, currentPosition.y);
+            input.Update(currentPosition);
         }
 
         public void Draw(SpriteBatch spriteBatch)
         {
-            render.Draw(spriteBatch, position);
+            render.Draw(spriteBatch, currentPosition);
+        }
+
+        public void Block()
+        {
+            currentPosition.x = previousPosition.x;
+            currentPosition.y = previousPosition.y;
         }
     }
 }

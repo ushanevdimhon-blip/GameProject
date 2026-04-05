@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using GameProject.Components;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
@@ -13,6 +14,7 @@ namespace GameProject
         private Enemy enemy;
         private Texture2D playerTexture;
         private Texture2D enemyTexture;
+        CollisionComponent collisions;
 
         public Game1()
         {
@@ -32,9 +34,12 @@ namespace GameProject
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
             playerTexture = Content.Load<Texture2D>("Images/5053745_0");
-            player = new Player(playerTexture, 0, 0);
+            player = new Player(playerTexture, 0, 0, 0.1f);
             enemyTexture = Content.Load<Texture2D>("Images/vecteezy_angry-face-emoji-png-file_11997334");
-            enemy = new Enemy(enemyTexture);
+            enemy = new Enemy(enemyTexture, 0.03f);
+            collisions = new CollisionComponent();
+            collisions.Collision += player.Block;
+            collisions.Collision += enemy.Block;
         }
 
         protected override void Update(GameTime gameTime)
@@ -44,6 +49,7 @@ namespace GameProject
 
             player.Update();
             enemy.Update();
+            collisions.CheckCollision(player, enemy);
 
             base.Update(gameTime);
         }

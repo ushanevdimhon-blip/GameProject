@@ -32,8 +32,6 @@ namespace GameProject.Components
             else
                 stamina++;
 
-            Debug.WriteLine(stamina.ToString());
-
             if (key.IsKeyDown(Keys.W))
             {
                 positionComponent.y -= 1 * (stamina == 0 ? 2 : velocity);

@@ -1,4 +1,5 @@
 ﻿using GameProject.Components;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
@@ -11,22 +12,24 @@ namespace GameProject
 {
     public class Enemy
     {
-        public Texture2D model;
+        Texture2D model;
         Random random;
         RenderComponent render;
-        public PositionComponent previousPosition;
-        public PositionComponent currentPosition;
+        PositionComponent previousPosition;
+        PositionComponent currentPosition;
         MoveComponent moveComponent;
         PatrolComponent patrol;
-        float wigth;
+        public Rectangle collisionRectangle;
+
+        float width;
         float height;
-        public float Wigth { get { return wigth; } private set { wigth = value; } }
+        public float Width { get { return width; } private set { width = value; } }
         public float Height { get { return height; } private set { height = value; } }
 
         public Enemy(Texture2D model, float scale)
         {
             this.model = model;
-            this.wigth = model.Width* scale;
+            this.width = model.Width* scale;
             this.height = model.Height* scale;
             random = new Random();
             render = new RenderComponent(model, scale);
@@ -39,13 +42,17 @@ namespace GameProject
         {
             previousPosition = new PositionComponent(currentPosition.X, currentPosition.Y);
             //patrol.Patrol();
+            collisionRectangle = new Rectangle((int)currentPosition.X,
+                (int)currentPosition.Y, (int)Width, (int)Height);
         }
 
         public void Draw(SpriteBatch spriteBatch)
         {
             render.Draw(spriteBatch, currentPosition);
         }
-
+        /// <summary>
+        /// останавливает игрока, нужен для коллизий
+        /// </summary>
         public void Block()
         {
             currentPosition.X = previousPosition.X;

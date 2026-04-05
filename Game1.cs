@@ -38,8 +38,8 @@ namespace GameProject
             enemyTexture = Content.Load<Texture2D>("Images/vecteezy_angry-face-emoji-png-file_11997334");
             enemy = new Enemy(enemyTexture, 0.03f);
             collisions = new CollisionComponent();
-            collisions.Collision += player.Block;
-            collisions.Collision += enemy.Block;
+            collisions.CollisionActions += player.Block;
+            collisions.CollisionActions += enemy.Block;
         }
 
         protected override void Update(GameTime gameTime)
@@ -49,7 +49,7 @@ namespace GameProject
 
             player.Update();
             enemy.Update();
-            collisions.CheckCollision(player, enemy);
+            collisions.CheckCollision(player.collisionRectangle, enemy.collisionRectangle);
 
             base.Update(gameTime);
         }

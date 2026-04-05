@@ -1,4 +1,5 @@
 ﻿using GameProject.Components;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
@@ -10,14 +11,16 @@ namespace GameProject
 {
     public class Player
     {
-        public Texture2D model;
-        public PositionComponent previousPosition;
-        public PositionComponent currentPosition;
-        public RenderComponent render;
-        public InputComponent input;
+        Texture2D model;
+        PositionComponent previousPosition;
+        PositionComponent currentPosition;
+        RenderComponent render;
+        InputComponent input;
+        public Rectangle collisionRectangle;
+
         float wigth;
         float height;
-        public float Wigth { get { return wigth; } private set { wigth = value; } }
+        public float Width { get { return wigth; } private set { wigth = value; } }
         public float Height { get { return height; } private set { height = value; } }
         public int Health {  get; private set; }
 
@@ -36,13 +39,17 @@ namespace GameProject
         {
             previousPosition = new PositionComponent(currentPosition.X, currentPosition.Y);
             input.Update(currentPosition);
+            collisionRectangle = new Rectangle((int)currentPosition.X,
+                (int)currentPosition.Y, (int)Width, (int)Height);
         }
 
         public void Draw(SpriteBatch spriteBatch)
         {
             render.Draw(spriteBatch, currentPosition);
         }
-
+        /// <summary>
+        /// останавливает игрока, нужен для коллизий
+        /// </summary>
         public void Block()
         {
             currentPosition.X = previousPosition.X;

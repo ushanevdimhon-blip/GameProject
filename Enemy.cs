@@ -39,26 +39,24 @@ namespace GameProject
             this.height = model.Height* scale;
             random = new Random();
             render = new RenderComponent(model, scale);
-            currentPosition = new PositionComponent((float)random.NextDouble()*200, (float)random.NextDouble() * 200);
+            currentPosition = new PositionComponent((float)random.NextDouble()*400, (float)random.NextDouble() * 400);
             moveComponent = new MoveComponent(currentPosition);
             patrol = new PatrolComponent(moveComponent, currentPosition);
-            collision = new CollisionComponent(currentPosition, this.width, this.height);   
+            collision = new CollisionComponent(currentPosition, this.width, this.height, 70);   
         }
 
         public void Update()
         {
             previousPosition = new PositionComponent(currentPosition.X, currentPosition.Y);
             //patrol.Patrol();
-            collision.Update();
+            collision.UpdateRectangleCollision();
         }
 
         public void Draw(SpriteBatch spriteBatch)
         {
             render.Draw(spriteBatch, currentPosition);
         }
-        /// <summary>
-        /// останавливает объект, нужен для коллизий
-        /// </summary>
+ 
         public void Block()
         {
             currentPosition.X = previousPosition.X;

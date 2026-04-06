@@ -42,7 +42,7 @@ namespace GameProject
             screenCollision = new CollisionComponent(screenBounds);
             _spriteBatch = new SpriteBatch(GraphicsDevice);
             playerTexture = Content.Load<Texture2D>("Images/5053745_0");
-            player = new Player(playerTexture, 0, 0, 0.1f);
+            player = new Player(playerTexture, 50, 50, 0.1f);
             enemyTexture = Content.Load<Texture2D>("Images/vecteezy_angry-face-emoji-png-file_11997334");
             enemy = new Enemy(enemyTexture, 0.03f);          
         }
@@ -55,6 +55,8 @@ namespace GameProject
             player.Update();
             enemy.Update();
             if (CheckRectangleCollision(player.collision, enemy.collision))
+                player.Block();
+            if (CheckCircleCollision(enemy.collision, player.collision))
                 player.Block();
             GetScreenCollision(player.collision);
             GetScreenCollision(enemy.collision);
@@ -70,8 +72,9 @@ namespace GameProject
 
             player.Draw(_spriteBatch);
             enemy.Draw(_spriteBatch);
-            enemy.collision.Draw(_spriteBatch, Color.Green);
-            player.collision.Draw(_spriteBatch, Color.Green);
+            enemy.collision.DrawRectangle(_spriteBatch, Color.Green);
+            enemy.collision.DrawCircle(_spriteBatch, Color.Green);
+            player.collision.DrawRectangle(_spriteBatch, Color.Green);
 
             _spriteBatch.End();
 
@@ -89,7 +92,7 @@ namespace GameProject
 
         public bool CheckCircleCollision(CollisionComponent collision1, CollisionComponent collision2)
         {
-            if (collision1.collisionRectangle.Intersects(collision2.collisionRectangle))
+            if (collision1.collisionCircle.Intersects(collision2.collisionRectangle))
             {
                 return true;
             }
@@ -101,21 +104,23 @@ namespace GameProject
         {
             if (collisionObject.collisionRectangle.Left < screenBounds.Left)
             {
-                player.currentPosition.X = screenBounds.Left;
+                collisionObject.currentPosition.X = screenBounds.Left + collisionObject.width/2;
             }
             else if (collisionObject.collisionRectangle.Right > screenBounds.Right)
             {
-                collisionObject.currentPosition.X = screenBounds.Right - collisionObject.width;
+                collisionObject.currentPosition.X = screenBounds.Right - collisionObject.width/2;
             }
 
             if (collisionObject.collisionRectangle.Top < screenBounds.Top)
             {
-                collisionObject.currentPosition.Y = screenBounds.Top;
+                collisionObject.currentPosition.Y = screenBounds.Top + collisionObject.height / 2;
             }
             else if (collisionObject.collisionRectangle.Bottom > screenBounds.Bottom)
             {
-                collisionObject.currentPosition.Y = screenBounds.Bottom - collisionObject.height;
+                collisionObject.currentPosition.Y = screenBounds.Bottom - collisionObject.height / 2;
             }
         }
     }
 }
+//!!!!ПРИ ОТРИСОВКЕ ТЕПЕРЬ МОДЕЛЬ РИСУЕТСЯ ОТ ЦЕНТРА(ТОЧНЕЕ ЦЕНТР МОДЕЛЬКИ НАТЯГИВАЕТСЯ НА КООРДИНАТЫ),
+//А НЕ ОТ ВЕРХНЕГО ЛЕВОГО УГЛА!!!!!

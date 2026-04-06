@@ -11,7 +11,7 @@ namespace GameProject.Components
     {
         public float X { get { return vector.X; } set { vector.X = value; } }
         public float Y { get { return vector.Y; } set { vector.Y = value; } }
-        Vector2 vector;
+        public Vector2 vector;
 
         public PositionComponent(float x, float y)
         {

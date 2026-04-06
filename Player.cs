@@ -47,16 +47,14 @@ namespace GameProject
         {
             previousPosition = new PositionComponent(currentPosition.X, currentPosition.Y);
             input.Update(currentPosition);
-            collision.Update();
+            collision.UpdateRectangleCollision();
         }
 
         public void Draw(SpriteBatch spriteBatch)
         {
             render.Draw(spriteBatch, currentPosition);
         }
-        /// <summary>
-        /// останавливает объект, нужен для коллизий
-        /// </summary>
+ 
         public void Block()
         {
             currentPosition.X = previousPosition.X;

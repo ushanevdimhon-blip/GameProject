@@ -19,6 +19,11 @@ namespace GameProject.Components
             this.scale = scale;
         }
 
+        /// <summary>
+        ///  отрисовывает спрайт так, чтобы его центр совпадал с позицией, заданной в PositionComponent
+        /// </summary>
+        /// <param name="spriteBatch"></param>
+        /// <param name="positionComponent"></param>
         public void Draw(SpriteBatch spriteBatch, PositionComponent positionComponent)
         {
             Vector2 origin = new Vector2(model.Width / 2f, model.Height / 2f);

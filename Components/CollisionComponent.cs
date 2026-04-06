@@ -53,8 +53,8 @@ namespace GameProject.Components
         {
             collisionRectangle = new Rectangle((int)(currentPosition.X - width / 2),
                 (int)(currentPosition.Y - height / 2), (int)width, (int)height);
-            //(int)(currentPosition.X - width / 2),(int)(currentPosition.Y - height / 2) - это для того, чтобы нарисовать прямоугольник,
-            //т.к. он рисуется от левого верхнего угла
+            //(int)(currentPosition.X - width / 2),(int)(currentPosition.Y - height / 2) - это для того,
+            //чтобы нарисовать прямоугольник, т.к. он рисуется от левого верхнего угла
         }
 
         public void UpdateCircleCollision()
@@ -62,7 +62,7 @@ namespace GameProject.Components
             collisionCircle = new Circle(currentPosition, radius);
         }
 
-        public void DrawRectangle(SpriteBatch spriteBatch, Color color)
+        public void DrawRectangle(SpriteBatch spriteBatch, Color color)//ИИ
         {
             Texture2D pixel = new Texture2D(spriteBatch.GraphicsDevice, 1, 1);
             pixel.SetData(new[] { Color.White });
@@ -77,7 +77,7 @@ namespace GameProject.Components
                 collisionRectangle.Top, 1, collisionRectangle.Height), color);
         }
 
-        public void DrawCircle(SpriteBatch spriteBatch, Color color)
+        public void DrawCircle(SpriteBatch spriteBatch, Color color)//ИИ
         {
             // Количество отрезков для сглаживания круга
             int segments = (int)(collisionCircle.Radius * 2);

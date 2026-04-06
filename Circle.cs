@@ -33,7 +33,7 @@ namespace GameProject
             return distanceSquared < radiiSquared;
         }
 
-        public bool Intersects(Rectangle rectangle)
+        public bool Intersects(Rectangle rectangle)//ИИ
         {
             // Находим ближайшую точку на прямоугольнике к центру круга
             float closestX = MathHelper.Clamp(Location.X, rectangle.Left, rectangle.Right);

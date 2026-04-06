@@ -54,7 +54,7 @@ namespace GameProject
 
             player.Update();
             enemy.Update();
-            if (CheckCollision(player.collision, enemy.collision))
+            if (CheckRectangleCollision(player.collision, enemy.collision))
                 player.Block();
             GetScreenCollision(player.collision);
             GetScreenCollision(enemy.collision);
@@ -70,13 +70,15 @@ namespace GameProject
 
             player.Draw(_spriteBatch);
             enemy.Draw(_spriteBatch);
+            enemy.collision.Draw(_spriteBatch, Color.Green);
+            player.collision.Draw(_spriteBatch, Color.Green);
 
             _spriteBatch.End();
 
             base.Draw(gameTime);
         }
 
-        public bool CheckCollision(CollisionComponent collision1, CollisionComponent collision2)
+        public bool CheckRectangleCollision(CollisionComponent collision1, CollisionComponent collision2)
         {
             if (collision1.collisionRectangle.Intersects(collision2.collisionRectangle))
             {
@@ -84,6 +86,16 @@ namespace GameProject
             }
             return false;
         }
+
+        public bool CheckCircleCollision(CollisionComponent collision1, CollisionComponent collision2)
+        {
+            if (collision1.collisionRectangle.Intersects(collision2.collisionRectangle))
+            {
+                return true;
+            }
+            return false;
+        }
+
         //по сути этот метод может подойти и для стен, чтобы при беге персонаж облизывал текстуры, а не липнул к ним
         public void GetScreenCollision(CollisionComponent collisionObject)
         {

@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,6 +33,21 @@ namespace GameProject.Components
         {
             collisionRectangle = new Rectangle((int)currentPosition.X,
                 (int)currentPosition.Y, (int)width, (int)height);
+        }
+
+        public void Draw(SpriteBatch spriteBatch, Color color)
+        {
+            Texture2D pixel = new Texture2D(spriteBatch.GraphicsDevice, 1, 1);
+            pixel.SetData(new[] { Color.White });
+
+            spriteBatch.Draw(pixel, new Rectangle(collisionRectangle.Left, 
+                collisionRectangle.Top, collisionRectangle.Width, 1), color);
+            spriteBatch.Draw(pixel, new Rectangle(collisionRectangle.Left, 
+                collisionRectangle.Bottom - 1, collisionRectangle.Width, 1), color);
+            spriteBatch.Draw(pixel, new Rectangle(collisionRectangle.Left, 
+                collisionRectangle.Top, 1, collisionRectangle.Height), color);
+            spriteBatch.Draw(pixel, new Rectangle(collisionRectangle.Right - 1, 
+                collisionRectangle.Top, 1, collisionRectangle.Height), color);
         }
     }
 }

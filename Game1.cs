@@ -55,9 +55,17 @@ namespace GameProject
             player.Update();
             enemy.Update();
             if (CheckRectangleCollision(player.collision, enemy.collision))
+            {
                 player.Block();
+                enemy.Block();
+            }
+                
             if (CheckCircleCollision(enemy.collision, player.collision))
+            {
                 player.Block();
+                enemy.Block();
+            }
+                
             GetScreenCollision(player.collision);
             GetScreenCollision(enemy.collision);
             base.Update(gameTime);

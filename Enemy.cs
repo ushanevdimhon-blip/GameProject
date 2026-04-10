@@ -48,8 +48,9 @@ namespace GameProject
         public void Update()
         {
             previousPosition = new PositionComponent(currentPosition.X, currentPosition.Y);
-            //patrol.Patrol();
+            patrol.Patrol();
             collision.UpdateRectangleCollision();
+            collision.UpdateCircleCollision();
         }
 
         public void Draw(SpriteBatch spriteBatch)

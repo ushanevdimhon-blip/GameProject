@@ -15,7 +15,7 @@ namespace GameProject.Components
         public Action OnDown;
         public Action OnRight;
         public Action OnLeft;
-        uint stamina = 10;
+        uint stamina = 5;
 
         public void Update(PositionComponent positionComponent)
         {

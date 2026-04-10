@@ -33,19 +33,16 @@ namespace GameProject
             return distanceSquared < radiiSquared;
         }
 
-        public bool Intersects(Rectangle rectangle)//ИИ
+        public bool Intersects(Rectangle rectangle)
         {
-            // Находим ближайшую точку на прямоугольнике к центру круга
-            float closestX = MathHelper.Clamp(Location.X, rectangle.Left, rectangle.Right);
-            float closestY = MathHelper.Clamp(Location.Y, rectangle.Top, rectangle.Bottom);
+            float closestX = Math.Clamp(Location.X, rectangle.Left, rectangle.Right);
+            float closestY = Math.Clamp(Location.Y, rectangle.Top, rectangle.Bottom);
 
-            // Вычисляем расстояние между центром круга и ближайшей точкой
-            float distanceX = Location.X - closestX;
-            float distanceY = Location.Y - closestY;
+            float catetX = Location.X - closestX;
+            float catetY = Location.Y - closestY;
 
-            // Проверяем, пересекается ли круг с прямоугольником
-            float distanceSquared = (distanceX * distanceX) + (distanceY * distanceY);
-            return distanceSquared < (Radius * Radius);
+            float hypotenuseSquared = (catetX * catetX) + (catetY * catetY);
+            return hypotenuseSquared < (Radius * Radius);
         }
     }
 }

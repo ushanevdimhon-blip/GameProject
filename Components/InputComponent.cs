@@ -15,7 +15,7 @@ namespace GameProject.Components
         public Action OnDown;
         public Action OnRight;
         public Action OnLeft;
-        uint stamina = 10;
+        uint stamina = 5;
 
         public void Update(PositionComponent positionComponent)
         {
@@ -32,29 +32,27 @@ namespace GameProject.Components
             else
                 stamina++;
 
-            Debug.WriteLine(stamina.ToString());
-
             if (key.IsKeyDown(Keys.W))
             {
-                positionComponent.y -= 1 * (stamina == 0 ? 2 : velocity);
+                positionComponent.Y -= 1 * (stamina == 0 ? 2 : velocity);
                 //OnUp();
             }
                 
             if (key.IsKeyDown(Keys.S))
             {
-                positionComponent.y += 1 * (stamina == 0 ? 2 : velocity);
+                positionComponent.Y += 1 * (stamina == 0 ? 2 : velocity);
                 //OnDown();
             }
                 
             if (key.IsKeyDown(Keys.D))
             {
-                positionComponent.x += 1 * (stamina == 0 ? 2 : velocity);
+                positionComponent.X += 1 * (stamina == 0 ? 2 : velocity);
                 //OnRight();
             }
                 
             if (key.IsKeyDown(Keys.A))
             {
-                positionComponent.x -= 1 * (stamina == 0 ? 2 : velocity);
+                positionComponent.X -= 1 * (stamina == 0 ? 2 : velocity);
                 //OnLeft();
             }        
         }

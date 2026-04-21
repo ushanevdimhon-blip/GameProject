@@ -16,6 +16,10 @@ namespace GameProject
         private Texture2D enemyTexture;
         CollisionComponent screenCollision;
         Rectangle screenBounds;
+        private Tilemap tilemap;
+        string[,] tileData;
+        Texture2D wallTexture;
+        Texture2D floorTexture;
 
         public Game1()
         {
@@ -42,9 +46,15 @@ namespace GameProject
             screenCollision = new CollisionComponent(screenBounds);
             _spriteBatch = new SpriteBatch(GraphicsDevice);
             playerTexture = Content.Load<Texture2D>("Images/5053745_0");
-            player = new Player(playerTexture, 50, 50, 0.1f);
+            player = new Player(playerTexture, 50, 500, 0.1f);
             enemyTexture = Content.Load<Texture2D>("Images/vecteezy_angry-face-emoji-png-file_11997334");
-            enemy = new Enemy(enemyTexture, 0.03f);          
+            enemy = new Enemy(enemyTexture, 0.03f);
+            tileData = new string[,] { 
+                { "09" }
+            };
+            wallTexture = Content.Load<Texture2D>("Images/Wall");
+            floorTexture = Content.Load<Texture2D>("Images/Floor");
+            tilemap = new Tilemap(tileData, 70, 70, wallTexture, floorTexture);
         }
 
         protected override void Update(GameTime gameTime)
@@ -63,8 +73,24 @@ namespace GameProject
             {
                 player.Block();
             }
-                
-            GetScreenCollision(player.collision);
+
+            for (int i = 0; i < tilemap.tiles.GetLength(0); i++)
+            {
+                for (int j = 0; j < tilemap.tiles.GetLength(1); j++)
+                {
+                    if (CheckRectangleCollision(player.collision, tilemap.tiles[i, j].collision))
+                    {
+                        if (tilemap.tiles[i, j].IsWall)
+                            player.Block();
+                    }
+                    if (CheckRectangleCollision(enemy.collision, tilemap.tiles[i, j].collision))
+                    {
+                        if (tilemap.tiles[i, j].IsWall)
+                            enemy.Block();
+                    }
+                }
+            }
+                    GetScreenCollision(player.collision);
             GetScreenCollision(enemy.collision);
             base.Update(gameTime);
         }
@@ -76,12 +102,13 @@ namespace GameProject
 
             _spriteBatch.Begin();
 
+            tilemap.Draw(_spriteBatch);
             player.Draw(_spriteBatch);
             enemy.Draw(_spriteBatch);
             enemy.collision.DrawRectangle(_spriteBatch, Color.Green);
             enemy.collision.DrawCircle(_spriteBatch, Color.Green);
             player.collision.DrawRectangle(_spriteBatch, Color.Green);
-
+            
             _spriteBatch.End();
 
             base.Draw(gameTime);

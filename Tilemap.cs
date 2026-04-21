@@ -1,4 +1,5 @@
 ﻿using GameProject.Components;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,14 +10,18 @@ namespace GameProject
 {
     public class Tilemap
     {
-        Tile[,] tiles;
+        public Tile[,] tiles;
+        Texture2D wallTexture;
+        Texture2D floorTexture;
         public int TileWidth { get; private set; }
         public int TileHeight { get; private set; }
 
-        public Tilemap(string[,] tileData, int tileWidth, int tileHeight)
+        public Tilemap(string[,] tileData, int tileWidth, int tileHeight, Texture2D wallTexture, Texture2D floorTexture)
         {
             TileWidth = tileWidth;
             TileHeight = tileHeight;
+            this.wallTexture = wallTexture;
+            this.floorTexture = floorTexture;
             tiles = new Tile[tileData.GetLength(0), tileData.GetLength(1)];
 
             for (int i = 0; i < tileData.GetLength(0); i++)
@@ -26,12 +31,30 @@ namespace GameProject
                     float x = tileWidth / 2 + j * tileWidth;
                     float y = tileHeight / 2 + i * tileHeight;
 
-                    var tile = new Tile();
-                    tile.position = new PositionComponent(x, y);
-                    //TODO: проверять чему равно tileData[i, j] и в зависимости от этого создавать разные типы тайлов
-                    //TODO: решить вопрос с размерами тайлов, чтобы они закрывали весь экран
-                    //RenderComponent.Draw() не надо менять, работает корректно
-                    tiles[i, j] = tile;
+                    if (tileData[i, j] == "01")
+                    {
+                        var tile = new Tile(tileWidth, tileHeight, new PositionComponent(x, y), wallTexture);
+                        tile.IsWall = true;
+                        tiles[i, j] = tile;
+                    }                  
+                    else if (tileData[i, j] == "09")
+                    {
+                        var tile = new Tile(tileWidth, tileHeight, new PositionComponent(x, y), floorTexture);
+                        tile.IsFloor = true;
+                        tiles[i, j] = tile;
+                    }
+                }
+            }
+        }
+
+        public void Draw(SpriteBatch spriteBatch)
+        {
+            for (int i = 0; i < tiles.GetLength(0); i++)
+            {
+                for (int j = 0; j < tiles.GetLength(1); j++)
+                {
+                    var tile = tiles[i, j];
+                    tile.Draw(spriteBatch);
                 }
             }
         }

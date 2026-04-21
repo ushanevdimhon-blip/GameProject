@@ -25,6 +25,18 @@
 /processorParam:TextureFormat=Color
 /build:images/5053745_0.jpg
 
+#begin images/Floor.webp
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:images/Floor.webp
+
 #begin images/vecteezy_angry-face-emoji-png-file_11997334.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -36,4 +48,16 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:images/vecteezy_angry-face-emoji-png-file_11997334.png
+
+#begin images/Wall.webp
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:images/Wall.webp
 

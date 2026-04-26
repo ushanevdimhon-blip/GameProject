@@ -50,7 +50,11 @@ namespace GameProject
             enemyTexture = Content.Load<Texture2D>("Images/vecteezy_angry-face-emoji-png-file_11997334");
             enemy = new Enemy(enemyTexture, 0.03f);
             tileData = new string[,] { 
-                { "09" }
+                { "01", "01", "01", "01", "01", "01", "01", "01", "01", "01", "01", "01" },
+                { "01", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "01" },
+                { "01", "09", "09", "09", "09", "01", "09", "09", "09", "09", "09", "01" },
+                { "01", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "01" },
+                { "01", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "01" }
             };
             wallTexture = Content.Load<Texture2D>("Images/Wall");
             floorTexture = Content.Load<Texture2D>("Images/Floor");

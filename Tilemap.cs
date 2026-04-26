@@ -47,11 +47,11 @@ namespace GameProject
             }
         }
 
-        public void Draw(SpriteBatch spriteBatch)
+        public void Draw(SpriteBatch spriteBatch, int startCol, int endCol, int startRow, int endRow)
         {
-            for (int i = 0; i < tiles.GetLength(0); i++)
+            for (int i = startRow; i < endRow; i++)
             {
-                for (int j = 0; j < tiles.GetLength(1); j++)
+                for (int j = startCol; j < endCol; j++)
                 {
                     var tile = tiles[i, j];
                     tile.Draw(spriteBatch);

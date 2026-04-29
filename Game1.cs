@@ -16,7 +16,6 @@ namespace GameProject
         private Enemy enemy;
         private Texture2D playerTexture;
         private Texture2D enemyTexture;
-        Rectangle screenBounds;
         private Tilemap tilemap;
         string[,] tileData;
         Texture2D wallTexture;
@@ -90,7 +89,9 @@ namespace GameProject
             player.Update();
             enemy.Update();
             
-            camera.Follow(player.currentPosition, worldWidth, worldHeight);
+            camera.Follow(player.currentPosition);
+            camera.Clamp(worldWidth, worldHeight);
+            camera.Update();
             
             if (CheckRectangleCollision(player.collision, enemy.collision))
             {

@@ -20,7 +20,7 @@ namespace GameProject
             targetPosition = new PositionComponent(0, 0);     
         }
 
-        public void Follow(PositionComponent targetPosition, float worldWidth, float worldHeight)
+        public void Follow(PositionComponent targetPosition)
         {
             this.targetPosition = targetPosition;
 
@@ -28,13 +28,9 @@ namespace GameProject
                 new Vector2(this.targetPosition.X, this.targetPosition.Y), 0.1f);
             position.X = vector.X;
             position.Y = vector.Y;
-
-            Clamp(worldWidth, worldHeight);
-
-            Update();
         }
 
-        private void Clamp(float worldWidth, float worldHeight)
+        public void Clamp(float worldWidth, float worldHeight)
         {
             if (position.X - width / 2 < 0)
                 position.X = width / 2;
@@ -49,9 +45,9 @@ namespace GameProject
                 position.Y = worldHeight - height / 2;
         }
 
-        private void Update()
+        public void Update()
         {
-            // Перемещаем объекты так, чтобы камера была в центре экрана
+            // Перемещает объекты, чтобы игрок был в центре экрана
             Matrix = Matrix.CreateTranslation(
                 -position.X + width / 2,
                 -position.Y + height / 2,

@@ -19,6 +19,8 @@ namespace GameProject.Components
         private readonly Tilemap tilemap;
         private List<PositionComponent> currentPath;
         private const float MovementSpeed = 150.0f;
+        private const float Interval = 0.1f;
+        private float time = 0.0f;
 
         public ChaseComponent(Tilemap tilemap)
         {
@@ -29,11 +31,16 @@ namespace GameProject.Components
         public void Chase(PositionComponent enemyPosition, PositionComponent playerPosition, GameTime gameTime)
         {
             float deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
+            time += deltaTime;
 
             var startTileIndex = ((int)(enemyPosition.X / tilemap.TileWidth), (int)(enemyPosition.Y / tilemap.TileHeight));
             var endTileIndex = ((int)(playerPosition.X / tilemap.TileWidth), (int)(playerPosition.Y / tilemap.TileHeight));
 
-            currentPath = GetPathByDijkstra(startTileIndex, endTileIndex);
+            if (time >= Interval)
+            {
+                time = 0.0f;
+                currentPath = GetPathByDijkstra(startTileIndex, endTileIndex);
+            }
 
             Move(enemyPosition, deltaTime);
         }
@@ -43,6 +50,7 @@ namespace GameProject.Components
             float distanceToMove = MovementSpeed * deltaTime;
             var currentPos = new Vector2(enemyPosition.X, enemyPosition.Y);
 
+            //цикл здесь по сути не нужен 
             for (int i = 1; i < currentPath.Count; i++)
             {
                 var next = new Vector2(currentPath[i].X, currentPath[i].Y);

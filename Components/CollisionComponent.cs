@@ -62,7 +62,8 @@ namespace GameProject.Components
             collisionCircle = new Circle(currentPosition, radius);
         }
 
-        public void DrawRectangle(SpriteBatch spriteBatch, Color color)//ИИ
+        //возможно вынести в debug класс
+        public void DrawRectangle(SpriteBatch spriteBatch, Color color)
         {
             Texture2D pixel = new Texture2D(spriteBatch.GraphicsDevice, 1, 1);
             pixel.SetData(new[] { Color.White });

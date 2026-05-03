@@ -13,13 +13,12 @@ namespace GameProject
     public class Enemy
     {
         Texture2D model;
-        Random random;
         RenderComponent render;
-        PositionComponent previousPosition;
         public PositionComponent currentPosition;
         MoveComponent moveComponent;
         PatrolComponent patrol;
         public CollisionComponent collision;
+        ChaseComponent chaseComponent;
 
         float width;
         float height;
@@ -32,36 +31,34 @@ namespace GameProject
         /// </summary>
         public float Height { get { return height; } private set { height = value; } }
 
-        public Enemy(Texture2D model, float scale)
+        public Enemy(Texture2D model, float scale, Tilemap tilemap)
         {
             this.model = model;
-            this.width = model.Width* scale;
-            this.height = model.Height* scale;
-            random = new Random();
+            this.width = model.Width * scale;
+            this.height = model.Height * scale;
             render = new RenderComponent(model, scale);
-            currentPosition = new PositionComponent(500, 200);
+            currentPosition = new PositionComponent(200, 200);
             moveComponent = new MoveComponent(currentPosition);
             patrol = new PatrolComponent(moveComponent, currentPosition);
-            collision = new CollisionComponent(currentPosition, this.width, this.height, 70);   
+            collision = new CollisionComponent(currentPosition, this.width*1.5f, this.height*1.5f, 150);
+            chaseComponent = new ChaseComponent(tilemap);
         }
 
         public void Update()
         {
-            previousPosition = new PositionComponent(currentPosition.X, currentPosition.Y);
-            patrol.Patrol();
+            //patrol.Patrol();
             collision.UpdateRectangleCollision();
             collision.UpdateCircleCollision();
+        }
+
+        public void Chase(PositionComponent playerPosition, GameTime gameTime)
+        {
+            chaseComponent.Chase(currentPosition, playerPosition, gameTime);
         }
 
         public void Draw(SpriteBatch spriteBatch)
         {
             render.Draw(spriteBatch, currentPosition);
-        }
- 
-        public void Block()
-        {
-            currentPosition.X = previousPosition.X;
-            currentPosition.Y = previousPosition.Y;
         }
     }
 }

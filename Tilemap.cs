@@ -11,8 +11,6 @@ namespace GameProject
     public class Tilemap
     {
         public Tile[,] tiles;
-        Texture2D wallTexture;
-        Texture2D floorTexture;
         public int TileWidth { get; private set; }
         public int TileHeight { get; private set; }
 
@@ -20,8 +18,6 @@ namespace GameProject
         {
             TileWidth = tileWidth;
             TileHeight = tileHeight;
-            this.wallTexture = wallTexture;
-            this.floorTexture = floorTexture;
             tiles = new Tile[tileData.GetLength(0), tileData.GetLength(1)];
 
             for (int i = 0; i < tileData.GetLength(0); i++)
@@ -35,12 +31,14 @@ namespace GameProject
                     {
                         var tile = new Tile(tileWidth, tileHeight, new PositionComponent(x, y), wallTexture);
                         tile.IsWall = true;
+                        tile.Price = int.MaxValue;
                         tiles[i, j] = tile;
                     }                  
                     else if (tileData[i, j] == "09")
                     {
                         var tile = new Tile(tileWidth, tileHeight, new PositionComponent(x, y), floorTexture);
                         tile.IsFloor = true;
+                        tile.Price = 1;
                         tiles[i, j] = tile;
                     }
                 }

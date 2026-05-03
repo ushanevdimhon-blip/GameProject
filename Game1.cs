@@ -43,23 +43,23 @@ namespace GameProject
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
             playerTexture = Content.Load<Texture2D>("Images/5053745_0");
-            player = new Player(playerTexture, 500, 500, 0.1f);
+            player = new Player(playerTexture, 300, 500, 0.08f);
 
             enemyTexture = Content.Load<Texture2D>("Images/vecteezy_angry-face-emoji-png-file_11997334");
-            enemy = new Enemy(enemyTexture, 0.03f);
+            
 
             tileData = new string[,] { 
                 { "01", "01", "01", "01", "01", "01", "01", "01", "01", "01", "01", "01", "01", "01", "01", "01", "01", "01", "01" },
-                { "01", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "01" },
-                { "01", "09", "09", "09", "09", "01", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "01" },
-                { "01", "01", "01", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "01" },
-                { "01", "09", "01", "09", "09", "09", "09", "09", "09", "01", "09", "09", "09", "09", "09", "09", "09", "09", "01" },
-                { "01", "09", "01", "09", "09", "09", "09", "09", "09", "01", "09", "09", "09", "09", "09", "09", "09", "09", "01" },
-                { "01", "09", "01", "09", "09", "09", "09", "09", "09", "01", "09", "09", "09", "09", "09", "09", "09", "09", "01" },
-                { "01", "09", "01", "09", "09", "09", "09", "09", "09", "01", "09", "09", "09", "09", "09", "09", "09", "09", "01" },
-                { "01", "09", "01", "09", "09", "09", "09", "09", "09", "01", "09", "09", "09", "09", "09", "09", "09", "09", "01" },
-                { "01", "09", "01", "09", "09", "09", "09", "09", "09", "01", "09", "09", "09", "09", "09", "09", "09", "09", "01" },
-                { "01", "09", "01", "09", "09", "09", "09", "09", "09", "01", "09", "09", "09", "09", "09", "09", "09", "09", "01" },
+                { "01", "09", "09", "09", "09", "09", "09", "01", "09", "09", "09", "01", "09", "09", "09", "09", "09", "09", "01" },
+                { "01", "09", "09", "09", "09", "01", "09", "01", "09", "01", "09", "01", "09", "09", "09", "09", "09", "09", "01" },
+                { "01", "01", "01", "09", "09", "09", "09", "01", "09", "01", "09", "01", "09", "09", "09", "09", "09", "09", "01" },
+                { "01", "09", "01", "09", "09", "09", "09", "01", "09", "01", "09", "01", "09", "09", "09", "09", "09", "09", "01" },
+                { "01", "09", "01", "09", "09", "09", "09", "01", "09", "01", "09", "01", "09", "09", "09", "09", "09", "09", "01" },
+                { "01", "09", "01", "09", "09", "09", "09", "01", "09", "01", "09", "01", "09", "09", "09", "09", "09", "09", "01" },
+                { "01", "09", "01", "09", "09", "09", "09", "01", "09", "01", "09", "01", "09", "09", "09", "09", "09", "09", "01" },
+                { "01", "09", "01", "09", "09", "09", "09", "01", "09", "01", "09", "01", "09", "09", "09", "09", "09", "09", "01" },
+                { "01", "09", "01", "09", "09", "09", "09", "01", "09", "01", "09", "01", "09", "09", "09", "09", "09", "09", "01" },
+                { "01", "09", "01", "09", "09", "09", "09", "01", "09", "01", "09", "01", "09", "09", "09", "09", "09", "09", "01" },
                 { "01", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "01" },
                 { "01", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "01" },
                 { "01", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "01" },
@@ -72,10 +72,10 @@ namespace GameProject
             };//сделать чтение из xml файла
             wallTexture = Content.Load<Texture2D>("Images/Wall");
             floorTexture = Content.Load<Texture2D>("Images/Floor"); 
-            tilemap = new Tilemap(tileData, 70, 70, wallTexture, floorTexture);           
+            tilemap = new Tilemap(tileData, 50, 50, wallTexture, floorTexture);           
             worldWidth = tilemap.tiles.GetLength(1) * tilemap.TileWidth;
             worldHeight = tilemap.tiles.GetLength(0) * tilemap.TileHeight;
-            
+            enemy = new Enemy(enemyTexture, 0.01f, tilemap);
 
             camera = new Camera(GraphicsDevice.PresentationParameters.BackBufferWidth, 
                 GraphicsDevice.PresentationParameters.BackBufferHeight);
@@ -88,23 +88,25 @@ namespace GameProject
 
             player.Update();
             enemy.Update();
+
             
+
             camera.Follow(player.currentPosition);
             camera.Clamp(worldWidth, worldHeight);
             camera.Update();
             
             if (CheckRectangleCollision(player.collision, enemy.collision))
             {
-                player.Block();
+                //TODO: обработать столкновение игрока и врага
             }
-                
+
             if (CheckCircleCollision(enemy.collision, player.collision))
             {
-                player.Block();
+                //TODO: обработать столкновение круга врага и прямоугольника игрока
+                enemy.Chase(player.currentPosition, gameTime);
             }
 
             CheckTilesCollision(tilemap, player.currentPosition, player.collision, player.Block);
-            CheckTilesCollision(tilemap, enemy.currentPosition, enemy.collision, enemy.Block);
 
             Rectangle cameraBounds = camera.GetCameraBounds();
             GetCameraCollision(player.collision, cameraBounds);

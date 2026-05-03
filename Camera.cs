@@ -26,6 +26,7 @@ namespace GameProject
 
             var vector = Vector2.Lerp(new Vector2(position.X, position.Y), 
                 new Vector2(this.targetPosition.X, this.targetPosition.Y), 0.1f);
+
             position.X = vector.X;
             position.Y = vector.Y;
         }
@@ -48,21 +49,12 @@ namespace GameProject
         public void Update()
         {
             // Перемещает объекты, чтобы игрок был в центре экрана
-            Matrix = Matrix.CreateTranslation(
-                -position.X + width / 2,
-                -position.Y + height / 2,
-                0
-            );
+            Matrix = Matrix.CreateTranslation(-position.X + width / 2, -position.Y + height / 2, 0);
         }
 
         public Rectangle GetCameraBounds()
         {
-            return new Rectangle(
-                (int)(position.X - width / 2),
-                (int)(position.Y - height / 2),
-                (int)width,
-                (int)height
-            );
+            return new Rectangle((int)(position.X - width / 2), (int)(position.Y - height / 2), (int)width, (int)height);
         }
 
         public (int startCol, int endCol, int startRow, int endRow) GetVisibleRange(int tileSize, int cols, int rows)

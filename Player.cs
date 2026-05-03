@@ -54,7 +54,7 @@ namespace GameProject
         {
             render.Draw(spriteBatch, currentPosition);
         }
- 
+
         public void Block()
         {
             currentPosition.X = previousPosition.X;

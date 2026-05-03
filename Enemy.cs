@@ -16,7 +16,7 @@ namespace GameProject
         Random random;
         RenderComponent render;
         PositionComponent previousPosition;
-        PositionComponent currentPosition;
+        public PositionComponent currentPosition;
         MoveComponent moveComponent;
         PatrolComponent patrol;
         public CollisionComponent collision;
@@ -39,7 +39,7 @@ namespace GameProject
             this.height = model.Height* scale;
             random = new Random();
             render = new RenderComponent(model, scale);
-            currentPosition = new PositionComponent((float)random.NextDouble()*400, (float)random.NextDouble() * 400);
+            currentPosition = new PositionComponent(500, 200);
             moveComponent = new MoveComponent(currentPosition);
             patrol = new PatrolComponent(moveComponent, currentPosition);
             collision = new CollisionComponent(currentPosition, this.width, this.height, 70);   
@@ -48,7 +48,7 @@ namespace GameProject
         public void Update()
         {
             previousPosition = new PositionComponent(currentPosition.X, currentPosition.Y);
-            //patrol.Patrol();
+            patrol.Patrol();
             collision.UpdateRectangleCollision();
             collision.UpdateCircleCollision();
         }

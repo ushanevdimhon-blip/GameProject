@@ -50,7 +50,6 @@ namespace GameProject.Components
             float distanceToMove = MovementSpeed * deltaTime;
             var currentPos = new Vector2(enemyPosition.X, enemyPosition.Y);
 
-            //цикл здесь по сути не нужен 
             for (int i = 1; i < currentPath.Count; i++)
             {
                 var next = new Vector2(currentPath[i].X, currentPath[i].Y);

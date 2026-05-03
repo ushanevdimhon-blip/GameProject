@@ -60,7 +60,6 @@ namespace GameProject.Components
                 {
                     direction.Normalize();//Превращает вектор в единичный вектор (длиной 1), сохраняя его направление.
                     currentPos += direction * distanceToMove;
-                    distanceToMove = 0;
                     break;
                 }
                 else

@@ -85,7 +85,7 @@ namespace GameProject.Components
             {
                 var current = queue.Dequeue();
 
-                foreach (var tile in GetAbleTilesIndex(current))
+                foreach (var tile in GetAbleTiles(current))
                 {
                     int tilePrice = tilemap.tiles[tile.Y, tile.X].Price;
                     int newCost = track[current].Price + tilePrice;
@@ -106,7 +106,7 @@ namespace GameProject.Components
             return new List<PositionComponent>();
         }
 
-        private IEnumerable<(int X, int Y)> GetAbleTilesIndex((int X, int Y) position)
+        private IEnumerable<(int X, int Y)> GetAbleTiles((int X, int Y) position)
         {
             if (position.X + 1 >= 0 && position.X + 1 < tilemap.tiles.GetLength(1) &&
                    position.Y >= 0 && position.Y < tilemap.tiles.GetLength(0) &&

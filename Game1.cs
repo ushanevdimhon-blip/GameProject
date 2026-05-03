@@ -193,8 +193,8 @@ namespace GameProject
                         if (CheckRectangleCollision(collision,
                             tilemap.tiles[nTileY, nTileX].collision))
                         {
-                            if (tilemap.tiles[nTileY, nTileX].IsWall)
-                                colAction();
+                            if (tilemap.tiles[nTileY, nTileX].IsWall)//добавить 1 action и подписывать на него действия
+                                colAction();//Action<Tile>: colAction = (tile) => { if (tile.IsWall) player.Block(); else player.Unblock(); }
                         }
                     }
                 }

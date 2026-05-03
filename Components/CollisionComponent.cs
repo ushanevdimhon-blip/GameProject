@@ -80,7 +80,6 @@ namespace GameProject.Components
 
         public void DrawCircle(SpriteBatch spriteBatch, Color color)//ИИ
         {
-            // Количество отрезков для сглаживания круга
             int segments = (int)(collisionCircle.Radius * 2);
             float angle = 0f;
             float angleStep = MathHelper.TwoPi / segments;
@@ -88,27 +87,21 @@ namespace GameProject.Components
             Texture2D pixel = new Texture2D(spriteBatch.GraphicsDevice, 1, 1);
             pixel.SetData(new[] { Color.White });
 
-            // Отрисовываем линии, соединяющие точки окружности
             for (int i = 0; i < segments; i++)
             {
-                // Текущая точка на окружности
                 Vector2 point1 = new Vector2(collisionCircle.X, collisionCircle.Y) +
                     collisionCircle.Radius * new Vector2((float)Math.Cos(angle), (float)Math.Sin(angle));
 
-                // Следующая точка на окружности
                 Vector2 point2 = new Vector2(collisionCircle.X, collisionCircle.Y) +
                     collisionCircle.Radius * new Vector2((float)Math.Cos(angle + angleStep), (float)Math.Sin(angle + angleStep));
 
-                // Вычисляем длину линии между двумя точками
                 Vector2 line = point2 - point1;
                 float lineLength = line.Length();
 
                 if (lineLength > 0)
                 {
-                    // Угол поворота для отрисовки линии в нужном направлении
                     float lineAngle = (float)Math.Atan2(line.Y, line.X);
 
-                    // Отрисовываем линию
                     spriteBatch.Draw(pixel,
                         new Rectangle((int)point1.X, (int)point1.Y, (int)lineLength, 1),
                         null,

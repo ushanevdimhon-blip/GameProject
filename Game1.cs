@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
+using System.Collections.Generic;
 using System.Runtime.InteropServices.Marshalling;
 
 
@@ -23,6 +24,9 @@ namespace GameProject
         Camera camera;
         float worldWidth;
         float worldHeight;
+        List<(int X, int Y)> patrolTargets;
+        float delay = 3.0f;
+        bool isFound = false;
 
         public Game1()
         {
@@ -33,8 +37,8 @@ namespace GameProject
 
         protected override void Initialize()
         {
-            // TODO: Add your initialization logic here
-            
+            // TODO: почистить LoadContent, вынести логику иницилизации
+
             base.Initialize();
         }
 
@@ -47,7 +51,6 @@ namespace GameProject
 
             enemyTexture = Content.Load<Texture2D>("Images/vecteezy_angry-face-emoji-png-file_11997334");
             
-
             tileData = new string[,] { 
                 { "01", "01", "01", "01", "01", "01", "01", "01", "01", "01", "01", "01", "01", "01", "01", "01", "01", "01", "01" },
                 { "01", "09", "09", "09", "09", "09", "09", "01", "09", "09", "09", "01", "09", "09", "09", "09", "09", "09", "01" },
@@ -69,12 +72,13 @@ namespace GameProject
                 { "01", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "01" },
                 { "01", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "01" },
                 { "01", "01", "01", "01", "01", "01", "01", "01", "01", "01", "01", "01", "01", "01", "01", "01", "01", "01", "01" }
-            };//сделать чтение из xml файла
+            };//сделать чтение из xml файла например
             wallTexture = Content.Load<Texture2D>("Images/Wall");
             floorTexture = Content.Load<Texture2D>("Images/Floor"); 
             tilemap = new Tilemap(tileData, 50, 50, wallTexture, floorTexture);           
             worldWidth = tilemap.tiles.GetLength(1) * tilemap.TileWidth;
             worldHeight = tilemap.tiles.GetLength(0) * tilemap.TileHeight;
+            patrolTargets = new List<(int X, int Y)> { (15, 11), (2, 2), (5, 7) };
             enemy = new Enemy(enemyTexture, 0.01f, tilemap);
 
             camera = new Camera(GraphicsDevice.PresentationParameters.BackBufferWidth, 
@@ -89,21 +93,34 @@ namespace GameProject
             player.Update();
             enemy.Update();
 
-            
-
             camera.Follow(player.currentPosition);
             camera.Clamp(worldWidth, worldHeight);
             camera.Update();
             
             if (CheckRectangleCollision(player.collision, enemy.collision))
             {
-                //TODO: обработать столкновение игрока и врага
+                //TODO: ???
             }
 
-            if (CheckCircleCollision(enemy.collision, player.collision))
+            if (CheckCircleCollision(enemy.collision, player.collision) && 
+                HasLineOfSight(player.currentPosition, enemy.currentPosition, tilemap))
             {
-                //TODO: обработать столкновение круга врага и прямоугольника игрока
                 enemy.Chase(player.currentPosition, gameTime);
+                isFound = true;
+            }
+            else
+            {
+                if (delay > 0.1f && isFound)
+                {
+                    enemy.Chase(new PositionComponent(player.currentPosition.X, player.currentPosition.Y), gameTime);
+                    delay -= (float)gameTime.ElapsedGameTime.TotalSeconds;
+                }
+                else
+                {
+                    enemy.Patrol(patrolTargets, gameTime);
+                    isFound = false;
+                    delay = 3.0f;
+                }                
             }
 
             CheckTilesCollision(tilemap, player.currentPosition, player.collision, player.Block);
@@ -136,6 +153,26 @@ namespace GameProject
             base.Draw(gameTime);
         }
 
+        public static bool HasLineOfSight(PositionComponent playerPosition, PositionComponent enemyPosition,
+            Tilemap map)
+        {
+            float dx = playerPosition.X - enemyPosition.X;
+            float dy = playerPosition.Y - enemyPosition.Y;
+            float dist = MathF.Sqrt(dx * dx + dy * dy);
+            if (dist == 0) return true;
+
+            int steps = (int)(dist / (map.TileWidth / 2f));
+            for (int i = 1; i < steps; i++)
+            {
+                float t = (float)i / steps;
+                int col = (int)((enemyPosition.X + dx * t) / map.TileWidth);
+                int row = (int)((enemyPosition.Y + dy * t) / map.TileWidth);
+                if (map.tiles[row, col].IsWall)
+                    return false;
+            }
+            return true;
+        }
+
         // вынести в отдельный класс, напр CollisionManager
         public bool CheckRectangleCollision(CollisionComponent collision1, CollisionComponent collision2)
         {
@@ -148,7 +185,7 @@ namespace GameProject
 
         public bool CheckCircleCollision(CollisionComponent collision1, CollisionComponent collision2)
         {
-            if (collision1.collisionCircle.Intersects(collision2.collisionRectangle))
+            if (collision1.collisionCircle.Intersects(collision2.collisionRectangle) )
             {
                 return true;
             }

@@ -39,14 +39,13 @@ namespace GameProject
             render = new RenderComponent(model, scale);
             currentPosition = new PositionComponent(200, 200);
             moveComponent = new MoveComponent(currentPosition);
-            patrol = new PatrolComponent(moveComponent, currentPosition);
+            patrol = new PatrolComponent(tilemap);
             collision = new CollisionComponent(currentPosition, this.width*1.5f, this.height*1.5f, 150);
-            chaseComponent = new ChaseComponent(tilemap);
+            chaseComponent = new ChaseComponent(tilemap, 0.1f, 150.0f);
         }
 
         public void Update()
         {
-            //patrol.Patrol();
             collision.UpdateRectangleCollision();
             collision.UpdateCircleCollision();
         }
@@ -54,6 +53,11 @@ namespace GameProject
         public void Chase(PositionComponent playerPosition, GameTime gameTime)
         {
             chaseComponent.Chase(currentPosition, playerPosition, gameTime);
+        }
+
+        public void Patrol(List<(int X, int Y)> targetsPositions, GameTime gameTime)
+        {
+            patrol.Patrol(currentPosition, targetsPositions, gameTime);
         }
 
         public void Draw(SpriteBatch spriteBatch)

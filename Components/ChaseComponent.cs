@@ -18,13 +18,15 @@ namespace GameProject.Components
     {
         private readonly Tilemap tilemap;
         private List<PositionComponent> currentPath;
-        private const float MovementSpeed = 150.0f;
-        private const float Interval = 0.1f;
+        private float MovementSpeed;
+        private float Interval;
         private float time = 0.0f;
 
-        public ChaseComponent(Tilemap tilemap)
+        public ChaseComponent(Tilemap tilemap, float interval, float speed)
         {
             this.tilemap = tilemap;
+            this.Interval = interval;
+            this.MovementSpeed = speed;
             this.currentPath = new List<PositionComponent>();
         }
 

@@ -1,5 +1,7 @@
-﻿using System;
+﻿using Microsoft.Xna.Framework;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -9,35 +11,34 @@ namespace GameProject.Components
 {
     public class PatrolComponent
     {
-        List<Action> list;
-        int index = 60;
-        MoveComponent moveComponent;
-        PositionComponent positionComponent;
-        Random random = new Random();
-        int randomInt = 1;
+        ChaseComponent chaseComponent;
+        int counter = 0;
+        Tilemap tilemap;
 
-        public PatrolComponent(MoveComponent moveComponent, PositionComponent positionComponent)
+        public PatrolComponent(Tilemap tilemap)
         {
-            this.moveComponent = moveComponent;
-            this.positionComponent = positionComponent;
-            list = new List<Action>()
-            {
-                moveComponent.MoveForward, 
-                moveComponent.MoveBackward, 
-                moveComponent.MoveRight,
-                moveComponent.MoveLeft
-            };
-            
+            this.tilemap = tilemap;
+            this.chaseComponent = new ChaseComponent(tilemap, 0.2f, 100.0f);
         }
-        public void Patrol()
+
+        public void Patrol(PositionComponent currentPosition, List<(int X, int Y)> targetsPositions, GameTime gameTime)
         {  
-            if (index == 0)
+            var target = targetsPositions[counter];
+            float posX = tilemap.tiles[target.Y, target.X].position.X;
+            float posY = tilemap.tiles[target.Y, target.X].position.Y;
+            chaseComponent.Chase(currentPosition, new PositionComponent(posX, posY), gameTime);
+            var next = new Vector2(posX, posY);
+            Vector2 direction = next - new Vector2(currentPosition.X, currentPosition.Y);
+            float distance = direction.Length();
+            if (distance < 30.0f)
             {
-                randomInt = random.Next(list.Count - 1);
-                index = 60;
-            }             
-            list[randomInt]();
-            index--;
+                counter++;
+                if (counter >= targetsPositions.Count)
+                {
+                    counter = 0;
+                }
+            }
+            Debug.WriteLine($"Patroling to: {posX}, {posY}     counter: {counter}     distance: {distance}");
         }
     }
 }

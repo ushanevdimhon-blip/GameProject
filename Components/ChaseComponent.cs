@@ -10,8 +10,8 @@ namespace GameProject.Components
 {
     public class DijkstraData
     {
-        public int Price { get; set; }
         public (int X, int Y) Previous { get; set; }
+        public int Price { get; set; }        
     }
 
     public class ChaseComponent
@@ -85,21 +85,20 @@ namespace GameProject.Components
 
             while (queue.Count > 0)
             {
-                var current = queue.Dequeue();
+                var toOpen = queue.Dequeue();
 
-                foreach (var tile in GetAbleTiles(current))
+                foreach (var nextTile in GetAbleTiles(toOpen))
                 {
-                    int tilePrice = tilemap.tiles[tile.Y, tile.X].Price;
-                    int newCost = track[current].Price + tilePrice;
+                    int currentPrice = track[toOpen].Price + tilemap.tiles[nextTile.Y, nextTile.X].Price;
 
-                    if (!track.ContainsKey(tile) || track[tile].Price > newCost)
+                    if (!track.ContainsKey(nextTile) || track[nextTile].Price > currentPrice)
                     {
-                        track[tile] = new DijkstraData { Price = newCost, Previous = current };
-                        queue.Enqueue(tile, newCost);
+                        track[nextTile] = new DijkstraData { Previous = toOpen, Price = currentPrice};
+                        queue.Enqueue(nextTile, currentPrice);
                     }
                 }
 
-                if (current == end)
+                if (toOpen == end)
                 {
                     return GetPath(track, end);
                 }

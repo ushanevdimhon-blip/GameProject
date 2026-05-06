@@ -15,7 +15,6 @@ namespace GameProject
         Texture2D model;
         RenderComponent render;
         public PositionComponent currentPosition;
-        MoveComponent moveComponent;
         PatrolComponent patrol;
         public CollisionComponent collision;
         ChaseComponent chaseComponent;
@@ -38,7 +37,6 @@ namespace GameProject
             this.height = model.Height * scale;
             render = new RenderComponent(model, scale);
             currentPosition = new PositionComponent(200, 200);
-            moveComponent = new MoveComponent(currentPosition);
             patrol = new PatrolComponent(tilemap);
             collision = new CollisionComponent(currentPosition, this.width*1.5f, this.height*1.5f, 150);
             chaseComponent = new ChaseComponent(tilemap, 0.1f, 150.0f);

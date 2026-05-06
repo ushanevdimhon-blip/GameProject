@@ -26,7 +26,7 @@ namespace GameProject
         float worldHeight;
         List<(int X, int Y)> patrolTargets;
         float delay = 3.0f;
-        bool isFound = false;
+        bool isDetected = false;
 
         public Game1()
         {
@@ -106,11 +106,11 @@ namespace GameProject
                 HasLineOfSight(player.currentPosition, enemy.currentPosition, tilemap))
             {
                 enemy.Chase(player.currentPosition, gameTime);
-                isFound = true;
+                isDetected = true;
             }
             else
             {
-                if (delay > 0.1f && isFound)
+                if (delay > 0.1f && isDetected)
                 {
                     enemy.Chase(new PositionComponent(player.currentPosition.X, player.currentPosition.Y), gameTime);
                     delay -= (float)gameTime.ElapsedGameTime.TotalSeconds;
@@ -118,7 +118,7 @@ namespace GameProject
                 else
                 {
                     enemy.Patrol(patrolTargets, gameTime);
-                    isFound = false;
+                    isDetected = false;
                     delay = 3.0f;
                 }                
             }
@@ -185,7 +185,7 @@ namespace GameProject
 
         public bool CheckCircleCollision(CollisionComponent collision1, CollisionComponent collision2)
         {
-            if (collision1.collisionCircle.Intersects(collision2.collisionRectangle) )
+            if (collision1.collisionCircle.Intersects(collision2.collisionRectangle))
             {
                 return true;
             }

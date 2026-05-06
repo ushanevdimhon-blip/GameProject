@@ -99,7 +99,7 @@ namespace GameProject
             
             if (CheckRectangleCollision(player.collision, enemy.collision))
             {
-                //TODO: ???
+                //TODO: убрать у enemy проверку на прямоуг коллизию, добавить еще одну круговую и проверять для атаки?
             }
 
             if (CheckCircleCollision(enemy.collision, player.collision) && 

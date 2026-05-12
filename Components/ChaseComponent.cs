@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection.Metadata.Ecma335;
 using System.Text;
@@ -30,6 +31,11 @@ namespace GameProject.Components
             this.currentPath = new List<PositionComponent>();
         }
 
+        public void ChangeMovementSpeed(float speed)
+        {
+            this.MovementSpeed = speed;
+        }
+
         public void Chase(PositionComponent enemyPosition, PositionComponent playerPosition, GameTime gameTime)
         {
             float deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
@@ -45,6 +51,7 @@ namespace GameProject.Components
             }
 
             Move(enemyPosition, deltaTime);
+            Debug.WriteLine($"Enemy Speed: {MovementSpeed}");
         }
 
         private void Move(PositionComponent enemyPosition, float deltaTime)

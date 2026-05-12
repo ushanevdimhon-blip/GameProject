@@ -1,0 +1,38 @@
+﻿using Microsoft.Xna.Framework;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace GameProject.Components
+{
+    public class AttackComponent
+    {
+        public float cooldown { get; private set; }
+
+        public AttackComponent(float cooldown) 
+        { 
+            this.cooldown = cooldown;
+        }
+
+        public void Attack(Action OnAttack, Action OnCooldown)
+        {
+            if (cooldown >= 3.0f)
+            {
+                OnAttack?.Invoke();
+                cooldown = 0.0f;
+            }
+            else
+            {
+                OnCooldown?.Invoke();
+            }
+        }
+
+        public void Update(GameTime gameTime)
+        {
+            cooldown += (float)gameTime.ElapsedGameTime.TotalSeconds;
+            cooldown = Math.Min(cooldown, 3.0f);
+        }
+    }
+}

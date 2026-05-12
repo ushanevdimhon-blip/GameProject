@@ -80,6 +80,7 @@ namespace GameProject
             worldHeight = tilemap.tiles.GetLength(0) * tilemap.TileHeight;
             patrolTargets = new List<(int X, int Y)> { (15, 11), (2, 2), (5, 7) };
             enemy = new Enemy(enemyTexture, 0.01f, tilemap);
+            enemy.OnAttack += () => player.TakeDamage(30);
 
             camera = new Camera(GraphicsDevice.PresentationParameters.BackBufferWidth, 
                 GraphicsDevice.PresentationParameters.BackBufferHeight);
@@ -90,29 +91,29 @@ namespace GameProject
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-            player.Update();
-            enemy.Update();
+            player.Update(gameTime);
+            enemy.Update(gameTime);
 
-            camera.Follow(player.currentPosition);
+            camera.Follow(player.positionComponent);
             camera.Clamp(worldWidth, worldHeight);
             camera.Update();
             
             if (CheckRectangleCollision(player.collision, enemy.collision))
             {
-                //TODO: убрать у enemy проверку на прямоуг коллизию, добавить еще одну круговую и проверять для атаки?
+                enemy.Attack();
             }
 
             if (CheckCircleCollision(enemy.collision, player.collision) && 
-                HasLineOfSight(player.currentPosition, enemy.currentPosition, tilemap))
+                HasLineOfSight(player.positionComponent, enemy.positionComponent, tilemap))
             {
-                enemy.Chase(player.currentPosition, gameTime);
+                enemy.Chase(player.positionComponent, gameTime);
                 isDetected = true;
             }
             else
             {
                 if (delay > 0.1f && isDetected)
                 {
-                    enemy.Chase(new PositionComponent(player.currentPosition.X, player.currentPosition.Y), gameTime);
+                    enemy.Chase(new PositionComponent(player.positionComponent.X, player.positionComponent.Y), gameTime);
                     delay -= (float)gameTime.ElapsedGameTime.TotalSeconds;
                 }
                 else
@@ -120,10 +121,10 @@ namespace GameProject
                     enemy.Patrol(patrolTargets, gameTime);
                     isDetected = false;
                     delay = 3.0f;
-                }                
+                }
             }
 
-            CheckTilesCollision(tilemap, player.currentPosition, player.collision, player.Block);
+            CheckTilesCollision(tilemap, player.positionComponent, player.collision, player.Block);
 
             Rectangle cameraBounds = camera.GetCameraBounds();
             GetCameraCollision(player.collision, cameraBounds);
@@ -132,7 +133,7 @@ namespace GameProject
 
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.CornflowerBlue);
+            GraphicsDevice.Clear(Color.Beige);
 
             _spriteBatch.Begin(transformMatrix: camera.Matrix);
 
@@ -219,9 +220,9 @@ namespace GameProject
             int tileX = (int)(currentPosition.X / tilemap.TileWidth);
             int tileY = (int)(currentPosition.Y / tilemap.TileHeight);
 
-            for (int i = -1; i <= 1; i++)
+            for (int i = -1; i < 2; i++)
             {
-                for (int j = -1; j <= 1; j++)
+                for (int j = -1; j < 2; j++)
                 {
                     int nTileX = tileX + j;
                     int nTileY = tileY + i;

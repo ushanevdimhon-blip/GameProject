@@ -38,7 +38,6 @@ namespace GameProject.Components
                     counter = 0;
                 }
             }
-            Debug.WriteLine($"Patroling to: {posX}, {posY}     counter: {counter}     distance: {distance}");
         }
     }
 }

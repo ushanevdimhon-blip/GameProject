@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,12 +12,16 @@ namespace GameProject
 {
     public class Player
     {
-        Texture2D model;
-        PositionComponent previousPosition;
-        public PositionComponent currentPosition;
+        Texture2D model;    
         RenderComponent render;
         InputComponent input;
+        SpeedComponent speedComponent;
+        HealthComponent healthComponent;
+        public PositionComponent positionComponent;
         public CollisionComponent collision;
+
+        public Action OnDeath;
+        public Action OnDamage;
 
         float width;
         float height;
@@ -28,37 +33,42 @@ namespace GameProject
         /// высота модели умноженная на масштаб
         /// </summary>
         public float Height { get { return height; } private set { height = value; } }
-        public int Health {  get; private set; }
 
         public Player(Texture2D model, float x, float y, float scale)
         {
             this.model = model;
             this.width = model.Width * scale;
             this.height = model.Height * scale;
-            currentPosition = new PositionComponent(x, y);
+            positionComponent = new PositionComponent(x, y);
+            speedComponent = new SpeedComponent(100.0f);
             render = new RenderComponent(model, scale);
-            input = new InputComponent();
-            collision = new CollisionComponent(currentPosition, this.width, this.height);
-            
-            Health = 100;
+            input = new InputComponent(speedComponent);
+            collision = new CollisionComponent(positionComponent, this.width, this.height);
+            healthComponent = new HealthComponent(100);
+
+            OnDeath += () => Debug.WriteLine("Player died!");
+            OnDeath += () => speedComponent.baseVelocity = 0.0f;
         }
 
-        public void Update()
+        public void Update(GameTime gameTime)
         {
-            previousPosition = new PositionComponent(currentPosition.X, currentPosition.Y);
-            input.Update(currentPosition);
+            input.Update(positionComponent, gameTime);
             collision.UpdateRectangleCollision();
         }
 
         public void Draw(SpriteBatch spriteBatch)
         {
-            render.Draw(spriteBatch, currentPosition);
+            render.Draw(spriteBatch, positionComponent);
+        }
+
+        public void TakeDamage(int damage)
+        {
+            healthComponent.TakeDamage(damage, OnDamage, OnDeath);
         }
 
         public void Block()
         {
-            currentPosition.X = previousPosition.X;
-            currentPosition.Y = previousPosition.Y;
+            positionComponent.Block();
         }
     }
 }

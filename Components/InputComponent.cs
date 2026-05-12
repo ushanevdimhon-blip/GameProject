@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework.Input;
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Design;
@@ -17,42 +18,46 @@ namespace GameProject.Components
         public Action OnRight;
         public Action OnLeft;
 
-        public InputComponent()
+        public InputComponent(SpeedComponent speedComponent)
         {
-            speedComponent = new SpeedComponent();
+            this.speedComponent = speedComponent;
         }
 
-        public void Update(PositionComponent positionComponent)
+        public void Update(PositionComponent positionComponent, GameTime gameTime)
         {
             var key = Keyboard.GetState();
 
-            speedComponent.isSprinting = key.IsKeyDown(Keys.LeftShift);
+            if (key.IsKeyDown(Keys.LeftShift))
+                speedComponent.Sprinting();
 
-            speedComponent.Update();
+            speedComponent.Update(gameTime);
+
+            positionComponent.PreviousX = positionComponent.X;
+            positionComponent.PreviousY = positionComponent.Y;
 
             if (key.IsKeyDown(Keys.W))
             {
-                positionComponent.Y -= 1 * (speedComponent.stamina == 0 ? 2 : speedComponent.velocity);
+                positionComponent.Y -= speedComponent.velocity;
                 //OnUp();
             }
-                
+
             if (key.IsKeyDown(Keys.S))
             {
-                positionComponent.Y += 1 * (speedComponent.stamina == 0 ? 2 : speedComponent.velocity);
+                positionComponent.Y += speedComponent.velocity;
                 //OnDown();
             }
-                
+
             if (key.IsKeyDown(Keys.D))
             {
-                positionComponent.X += 1 * (speedComponent.stamina == 0 ? 2 : speedComponent.velocity);
+                positionComponent.X += speedComponent.velocity;
                 //OnRight();
             }
-                
+
             if (key.IsKeyDown(Keys.A))
             {
-                positionComponent.X -= 1 * (speedComponent.stamina == 0 ? 2 : speedComponent.velocity);
+                positionComponent.X -= speedComponent.velocity;
                 //OnLeft();
-            }        
+            }
         }
     }
 }

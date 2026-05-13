@@ -12,7 +12,7 @@ namespace GameProject.Components
 {
     public class InputComponent
     {
-        SpeedComponent speedComponent;
+        public SpeedComponent speedComponent;
         public Action OnUp;
         public Action OnDown;
         public Action OnRight;

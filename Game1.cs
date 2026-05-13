@@ -1,4 +1,5 @@
 ﻿using GameProject.Components;
+using GameProject.UI;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -22,6 +23,7 @@ namespace GameProject
         Texture2D wallTexture;
         Texture2D floorTexture;
         Camera camera;
+        UIPresenter uiPresenter;
         float worldWidth;
         float worldHeight;
         List<(int X, int Y)> patrolTargets;
@@ -81,6 +83,7 @@ namespace GameProject
             patrolTargets = new List<(int X, int Y)> { (15, 11), (2, 2), (5, 7) };
             enemy = new Enemy(enemyTexture, 0.01f, tilemap);
             enemy.OnAttack += () => player.TakeDamage(30);
+            uiPresenter = new UIPresenter(new UIModel(10, 10, 100, 100), new UIView());
 
             camera = new Camera(GraphicsDevice.PresentationParameters.BackBufferWidth, 
                 GraphicsDevice.PresentationParameters.BackBufferHeight);
@@ -97,7 +100,9 @@ namespace GameProject
             camera.Follow(player.positionComponent);
             camera.Clamp(worldWidth, worldHeight);
             camera.Update();
-            
+
+            uiPresenter.Update(player.Health, player.Stamina);
+
             if (CheckRectangleCollision(player.collision, enemy.collision))
             {
                 enemy.Attack();
@@ -150,6 +155,15 @@ namespace GameProject
             enemy.collision.DrawCircle(_spriteBatch, Color.Green);
 
             _spriteBatch.End();
+
+            // 2. Рисуем UI отдельно (без трансформации камеры)
+            _spriteBatch.Begin(); // Нет transformMatrix!
+
+            uiPresenter.Draw(_spriteBatch);
+
+            _spriteBatch.End();
+
+            base.Draw(gameTime);
 
             base.Draw(gameTime);
         }

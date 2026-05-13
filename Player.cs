@@ -34,6 +34,9 @@ namespace GameProject
         /// </summary>
         public float Height { get { return height; } private set { height = value; } }
 
+        public int Health { get { return healthComponent.Health; } }
+        public float Stamina { get { return input.speedComponent.stamina; } }
+
         public Player(Texture2D model, float x, float y, float scale)
         {
             this.model = model;

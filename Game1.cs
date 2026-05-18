@@ -103,20 +103,25 @@ namespace GameProject
             player.collision.TileCollisionDetected +=
                 (tile) =>
                 {
-                    if (tile.IsWall || tile.IsClosedDoor) 
+                    if (tile.IsWall || tile.IsClosedDoor)
                         player.Block();
-                    if (tile.IsKey) 
-                    { 
+                    if (tile.IsKey)
+                    {
                         tilemap.Update((tile.TileIndex.Y, tile.TileIndex.X), key2Texture);
                         player.KeysCollected++;
                         patrolTargets[patrolTargets.IndexOf((tile.TileIndex.Y, tile.TileIndex.X))] = tilemap.GetRandomFloorTileIndex();
-                    } 
+                    }
+                    if (tile.IsOpenDoor)
+                    {
+                        //TODO: переход на сцену конца.
+                        player.Block();
+                    }
                 };
             player.OnAllKeysCollected += () =>
             {
                 var index = tilemap.GetDoorIndex();
                 tilemap.Update(index, floorTexture);
-                tilemap.tiles[index.X, index.Y].IsOpenDoor = true;
+                tilemap.tiles[index.Y, index.X].IsOpenDoor = true;
             };
             worldWidth = tilemap.tiles.GetLength(1) * tilemap.TileWidth;
             worldHeight = tilemap.tiles.GetLength(0) * tilemap.TileHeight;

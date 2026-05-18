@@ -30,7 +30,7 @@ namespace GameProject.Components
             var next = new Vector2(posX, posY);
             Vector2 direction = next - new Vector2(currentPosition.X, currentPosition.Y);
             float distance = direction.Length();
-            if (distance < 30.0f)
+            if (distance < 50.0f)
             {
                 counter++;
                 if (counter >= targetsPositions.Count)
@@ -38,6 +38,7 @@ namespace GameProject.Components
                     counter = 0;
                 }
             }
+            Debug.WriteLine($"counter: {counter} at position ({target.X}, {target.Y})");
         }
     }
 }

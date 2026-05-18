@@ -51,7 +51,6 @@ namespace GameProject.Components
             }
 
             Move(enemyPosition, deltaTime);
-            Debug.WriteLine($"Enemy Speed: {MovementSpeed}");
         }
 
         private void Move(PositionComponent enemyPosition, float deltaTime)

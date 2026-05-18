@@ -13,13 +13,15 @@ namespace GameProject
     public class Enemy
     {
         Texture2D model;
-        Random random;
-        RenderComponent render;
-        PositionComponent previousPosition;
-        public PositionComponent currentPosition;
-        MoveComponent moveComponent;
-        PatrolComponent patrol;
+        RenderComponent render;       
+        PatrolComponent patrol;        
+        ChaseComponent chaseComponent;
+        AttackComponent attackComponent;
+        public PositionComponent positionComponent;
         public CollisionComponent collision;
+
+        public Action OnAttack;
+        public Action OnCooldown;
 
         float width;
         float height;
@@ -32,36 +34,48 @@ namespace GameProject
         /// </summary>
         public float Height { get { return height; } private set { height = value; } }
 
-        public Enemy(Texture2D model, float scale)
+        public Enemy(Texture2D model, float scale, Tilemap tilemap)
         {
             this.model = model;
-            this.width = model.Width* scale;
-            this.height = model.Height* scale;
-            random = new Random();
+            this.width = model.Width * scale;
+            this.height = model.Height * scale;
             render = new RenderComponent(model, scale);
-            currentPosition = new PositionComponent(500, 200);
-            moveComponent = new MoveComponent(currentPosition);
-            patrol = new PatrolComponent(moveComponent, currentPosition);
-            collision = new CollisionComponent(currentPosition, this.width, this.height, 70);   
+            positionComponent = new PositionComponent(200, 200);
+            patrol = new PatrolComponent(tilemap);
+            collision = new CollisionComponent(positionComponent, this.width*1.5f, this.height*1.5f, 150);
+            chaseComponent = new ChaseComponent(tilemap, 0.1f, 150.0f);
+            attackComponent = new AttackComponent(3.0f);
+
+            OnCooldown += () => { chaseComponent.ChangeMovementSpeed(50.0f); };
         }
 
-        public void Update()
+        public void Update(GameTime gameTime)
         {
-            previousPosition = new PositionComponent(currentPosition.X, currentPosition.Y);
-            patrol.Patrol();
+            attackComponent.Update(gameTime);
+            if (attackComponent.cooldown >= 3.0f)
+                chaseComponent.ChangeMovementSpeed(150.0f);
             collision.UpdateRectangleCollision();
             collision.UpdateCircleCollision();
         }
 
+        public void Chase(PositionComponent playerPosition, GameTime gameTime)
+        {
+            chaseComponent.Chase(positionComponent, playerPosition, gameTime);
+        }
+
+        public void Patrol(List<(int X, int Y)> targetsPositions, GameTime gameTime)
+        {
+            patrol.Patrol(positionComponent, targetsPositions, gameTime);
+        }
+
+        public void Attack()
+        {
+            attackComponent.Attack(OnAttack, OnCooldown);
+        }
+
         public void Draw(SpriteBatch spriteBatch)
         {
-            render.Draw(spriteBatch, currentPosition);
-        }
- 
-        public void Block()
-        {
-            currentPosition.X = previousPosition.X;
-            currentPosition.Y = previousPosition.Y;
+            render.Draw(spriteBatch, positionComponent);
         }
     }
 }

@@ -11,11 +11,12 @@ namespace GameProject
     public class Tile
     {
         Texture2D model;
-        PositionComponent position;
+        public PositionComponent position;
         public CollisionComponent collision;
         RenderComponent render;
         public int TileWidth { get; private set; }
         public int TileHeight { get; private set; }
+        public int Price { get; set; }
         public bool IsWall { get; set; }
         public bool IsFloor { get; set; }
 

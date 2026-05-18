@@ -1,8 +1,10 @@
 ﻿using GameProject.Components;
+using GameProject.UI;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
+using System.Collections.Generic;
 using System.Runtime.InteropServices.Marshalling;
 
 
@@ -21,8 +23,12 @@ namespace GameProject
         Texture2D wallTexture;
         Texture2D floorTexture;
         Camera camera;
+        UIPresenter uiPresenter;
         float worldWidth;
         float worldHeight;
+        List<(int X, int Y)> patrolTargets;
+        float delay = 3.0f;
+        bool isDetected = false;
 
         public Game1()
         {
@@ -33,8 +39,8 @@ namespace GameProject
 
         protected override void Initialize()
         {
-            // TODO: Add your initialization logic here
-            
+            // TODO: почистить LoadContent, вынести логику иницилизации
+
             base.Initialize();
         }
 
@@ -43,23 +49,22 @@ namespace GameProject
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
             playerTexture = Content.Load<Texture2D>("Images/5053745_0");
-            player = new Player(playerTexture, 500, 500, 0.1f);
+            player = new Player(playerTexture, 300, 500, 0.08f);
 
             enemyTexture = Content.Load<Texture2D>("Images/vecteezy_angry-face-emoji-png-file_11997334");
-            enemy = new Enemy(enemyTexture, 0.03f);
-
+            
             tileData = new string[,] { 
                 { "01", "01", "01", "01", "01", "01", "01", "01", "01", "01", "01", "01", "01", "01", "01", "01", "01", "01", "01" },
-                { "01", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "01" },
-                { "01", "09", "09", "09", "09", "01", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "01" },
-                { "01", "01", "01", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "01" },
-                { "01", "09", "01", "09", "09", "09", "09", "09", "09", "01", "09", "09", "09", "09", "09", "09", "09", "09", "01" },
-                { "01", "09", "01", "09", "09", "09", "09", "09", "09", "01", "09", "09", "09", "09", "09", "09", "09", "09", "01" },
-                { "01", "09", "01", "09", "09", "09", "09", "09", "09", "01", "09", "09", "09", "09", "09", "09", "09", "09", "01" },
-                { "01", "09", "01", "09", "09", "09", "09", "09", "09", "01", "09", "09", "09", "09", "09", "09", "09", "09", "01" },
-                { "01", "09", "01", "09", "09", "09", "09", "09", "09", "01", "09", "09", "09", "09", "09", "09", "09", "09", "01" },
-                { "01", "09", "01", "09", "09", "09", "09", "09", "09", "01", "09", "09", "09", "09", "09", "09", "09", "09", "01" },
-                { "01", "09", "01", "09", "09", "09", "09", "09", "09", "01", "09", "09", "09", "09", "09", "09", "09", "09", "01" },
+                { "01", "09", "09", "09", "09", "09", "09", "01", "09", "09", "09", "01", "09", "09", "09", "09", "09", "09", "01" },
+                { "01", "09", "09", "09", "09", "01", "09", "01", "09", "01", "09", "01", "09", "09", "09", "09", "09", "09", "01" },
+                { "01", "01", "01", "09", "09", "09", "09", "01", "09", "01", "09", "01", "09", "09", "09", "09", "09", "09", "01" },
+                { "01", "09", "01", "09", "09", "09", "09", "01", "09", "01", "09", "01", "09", "09", "09", "09", "09", "09", "01" },
+                { "01", "09", "01", "09", "09", "09", "09", "01", "09", "01", "09", "01", "09", "09", "09", "09", "09", "09", "01" },
+                { "01", "09", "01", "09", "09", "09", "09", "01", "09", "01", "09", "01", "09", "09", "09", "09", "09", "09", "01" },
+                { "01", "09", "01", "09", "09", "09", "09", "01", "09", "01", "09", "01", "09", "09", "09", "09", "09", "09", "01" },
+                { "01", "09", "01", "09", "09", "09", "09", "01", "09", "01", "09", "01", "09", "09", "09", "09", "09", "09", "01" },
+                { "01", "09", "01", "09", "09", "09", "09", "01", "09", "01", "09", "01", "09", "09", "09", "09", "09", "09", "01" },
+                { "01", "09", "01", "09", "09", "09", "09", "01", "09", "01", "09", "01", "09", "09", "09", "09", "09", "09", "01" },
                 { "01", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "01" },
                 { "01", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "01" },
                 { "01", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "01" },
@@ -69,13 +74,16 @@ namespace GameProject
                 { "01", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "01" },
                 { "01", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "01" },
                 { "01", "01", "01", "01", "01", "01", "01", "01", "01", "01", "01", "01", "01", "01", "01", "01", "01", "01", "01" }
-            };//сделать чтение из xml файла
+            };//сделать чтение из xml файла например
             wallTexture = Content.Load<Texture2D>("Images/Wall");
             floorTexture = Content.Load<Texture2D>("Images/Floor"); 
-            tilemap = new Tilemap(tileData, 70, 70, wallTexture, floorTexture);           
+            tilemap = new Tilemap(tileData, 50, 50, wallTexture, floorTexture);           
             worldWidth = tilemap.tiles.GetLength(1) * tilemap.TileWidth;
             worldHeight = tilemap.tiles.GetLength(0) * tilemap.TileHeight;
-            
+            patrolTargets = new List<(int X, int Y)> { (15, 11), (2, 2), (5, 7) };
+            enemy = new Enemy(enemyTexture, 0.01f, tilemap);
+            enemy.OnAttack += () => player.TakeDamage(30);
+            uiPresenter = new UIPresenter(new UIModel(10, 10, 100, 100), new UIView());
 
             camera = new Camera(GraphicsDevice.PresentationParameters.BackBufferWidth, 
                 GraphicsDevice.PresentationParameters.BackBufferHeight);
@@ -86,25 +94,42 @@ namespace GameProject
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-            player.Update();
-            enemy.Update();
-            
-            camera.Follow(player.currentPosition);
+            player.Update(gameTime);
+            enemy.Update(gameTime);
+
+            camera.Follow(player.positionComponent);
             camera.Clamp(worldWidth, worldHeight);
             camera.Update();
-            
+
+            uiPresenter.Update(player.Health, player.Stamina);
+
             if (CheckRectangleCollision(player.collision, enemy.collision))
             {
-                player.Block();
-            }
-                
-            if (CheckCircleCollision(enemy.collision, player.collision))
-            {
-                player.Block();
+                enemy.Attack();
             }
 
-            CheckTilesCollision(tilemap, player.currentPosition, player.collision, player.Block);
-            CheckTilesCollision(tilemap, enemy.currentPosition, enemy.collision, enemy.Block);
+            if (CheckCircleCollision(enemy.collision, player.collision) && 
+                HasLineOfSight(player.positionComponent, enemy.positionComponent, tilemap))
+            {
+                enemy.Chase(player.positionComponent, gameTime);
+                isDetected = true;
+            }
+            else
+            {
+                if (delay > 0.1f && isDetected)
+                {
+                    enemy.Chase(new PositionComponent(player.positionComponent.X, player.positionComponent.Y), gameTime);
+                    delay -= (float)gameTime.ElapsedGameTime.TotalSeconds;
+                }
+                else
+                {
+                    enemy.Patrol(patrolTargets, gameTime);
+                    isDetected = false;
+                    delay = 3.0f;
+                }
+            }
+
+            CheckTilesCollision(tilemap, player.positionComponent, player.collision, player.Block);
 
             Rectangle cameraBounds = camera.GetCameraBounds();
             GetCameraCollision(player.collision, cameraBounds);
@@ -113,7 +138,7 @@ namespace GameProject
 
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.CornflowerBlue);
+            GraphicsDevice.Clear(Color.Beige);
 
             _spriteBatch.Begin(transformMatrix: camera.Matrix);
 
@@ -131,7 +156,36 @@ namespace GameProject
 
             _spriteBatch.End();
 
+            // 2. Рисуем UI отдельно (без трансформации камеры)
+            _spriteBatch.Begin(); // Нет transformMatrix!
+
+            uiPresenter.Draw(_spriteBatch);
+
+            _spriteBatch.End();
+
             base.Draw(gameTime);
+
+            base.Draw(gameTime);
+        }
+
+        public static bool HasLineOfSight(PositionComponent playerPosition, PositionComponent enemyPosition,
+            Tilemap map)
+        {
+            float dx = playerPosition.X - enemyPosition.X;
+            float dy = playerPosition.Y - enemyPosition.Y;
+            float dist = MathF.Sqrt(dx * dx + dy * dy);
+            if (dist == 0) return true;
+
+            int steps = (int)(dist / (map.TileWidth / 2f));
+            for (int i = 1; i < steps; i++)
+            {
+                float t = (float)i / steps;
+                int col = (int)((enemyPosition.X + dx * t) / map.TileWidth);
+                int row = (int)((enemyPosition.Y + dy * t) / map.TileWidth);
+                if (map.tiles[row, col].IsWall)
+                    return false;
+            }
+            return true;
         }
 
         // вынести в отдельный класс, напр CollisionManager
@@ -180,9 +234,9 @@ namespace GameProject
             int tileX = (int)(currentPosition.X / tilemap.TileWidth);
             int tileY = (int)(currentPosition.Y / tilemap.TileHeight);
 
-            for (int i = -1; i <= 1; i++)
+            for (int i = -1; i < 2; i++)
             {
-                for (int j = -1; j <= 1; j++)
+                for (int j = -1; j < 2; j++)
                 {
                     int nTileX = tileX + j;
                     int nTileY = tileY + i;

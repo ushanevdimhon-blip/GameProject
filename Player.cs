@@ -22,9 +22,14 @@ namespace GameProject
 
         public Action OnDeath;
         public Action OnDamage;
+        public Action OnAllKeysCollected;
 
         float width;
         float height;
+        int keysToCollect;
+        int keysCollected;
+
+        public int KeysCollected { get { return keysCollected; } set { keysCollected = value; } }
         /// <summary>
         /// ширина модели умноженная на масштаб
         /// </summary>
@@ -37,11 +42,12 @@ namespace GameProject
         public int Health { get { return healthComponent.Health; } }
         public float Stamina { get { return input.speedComponent.stamina; } }
 
-        public Player(Texture2D model, float x, float y, float scale)
+        public Player(Texture2D model, float x, float y, float scale, int keysToCollect)
         {
             this.model = model;
             this.width = model.Width * scale;
             this.height = model.Height * scale;
+            this.keysToCollect = keysToCollect;
             positionComponent = new PositionComponent(x, y);
             speedComponent = new SpeedComponent(100.0f);
             render = new RenderComponent(model, scale);
@@ -55,6 +61,11 @@ namespace GameProject
 
         public void Update(GameTime gameTime)
         {
+            if (keysCollected >= keysToCollect)
+            {
+                OnAllKeysCollected?.Invoke();
+                keysCollected = 0;
+            }
             input.Update(positionComponent, gameTime);
             collision.UpdateRectangleCollision();
         }

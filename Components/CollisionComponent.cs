@@ -16,6 +16,7 @@ namespace GameProject.Components
         public float width;
         public float height;
         public PositionComponent currentPosition;
+        public Action<Tile> TileCollisionDetected;
 
         public CollisionComponent(PositionComponent currentPosition, float width, float height)
         {

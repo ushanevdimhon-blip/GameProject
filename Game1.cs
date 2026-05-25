@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
+using System.Numerics;
 using System.Runtime.InteropServices.Marshalling;
 
 
@@ -22,11 +23,15 @@ namespace GameProject
         string[,] tileData;
         Texture2D wallTexture;
         Texture2D floorTexture;
+        Texture2D keyTexture;
+        Texture2D key2Texture;
+        Texture2D doorTexture;
         Camera camera;
         UIPresenter uiPresenter;
         float worldWidth;
         float worldHeight;
         List<(int X, int Y)> patrolTargets;
+        int keysToCollect = 1;
         float delay = 3.0f;
         bool isDetected = false;
 
@@ -49,7 +54,7 @@ namespace GameProject
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
             playerTexture = Content.Load<Texture2D>("Images/5053745_0");
-            player = new Player(playerTexture, 300, 500, 0.08f);
+            player = new Player(playerTexture, 300, 500, 0.08f, keysToCollect);
 
             enemyTexture = Content.Load<Texture2D>("Images/vecteezy_angry-face-emoji-png-file_11997334");
             
@@ -60,11 +65,24 @@ namespace GameProject
                 { "01", "01", "01", "09", "09", "09", "09", "01", "09", "01", "09", "01", "09", "09", "09", "09", "09", "09", "01" },
                 { "01", "09", "01", "09", "09", "09", "09", "01", "09", "01", "09", "01", "09", "09", "09", "09", "09", "09", "01" },
                 { "01", "09", "01", "09", "09", "09", "09", "01", "09", "01", "09", "01", "09", "09", "09", "09", "09", "09", "01" },
+                { "02", "09", "01", "09", "09", "09", "09", "01", "09", "01", "09", "01", "09", "09", "09", "09", "09", "09", "01" },
                 { "01", "09", "01", "09", "09", "09", "09", "01", "09", "01", "09", "01", "09", "09", "09", "09", "09", "09", "01" },
                 { "01", "09", "01", "09", "09", "09", "09", "01", "09", "01", "09", "01", "09", "09", "09", "09", "09", "09", "01" },
                 { "01", "09", "01", "09", "09", "09", "09", "01", "09", "01", "09", "01", "09", "09", "09", "09", "09", "09", "01" },
                 { "01", "09", "01", "09", "09", "09", "09", "01", "09", "01", "09", "01", "09", "09", "09", "09", "09", "09", "01" },
-                { "01", "09", "01", "09", "09", "09", "09", "01", "09", "01", "09", "01", "09", "09", "09", "09", "09", "09", "01" },
+                { "01", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "01" },
+                { "01", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "01" },
+                { "01", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "01" },
+                { "01", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "01" },
+                { "01", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "01" },
+                { "01", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "01" },
+                { "01", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "01" },
+                { "01", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "01" },
+                { "01", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "01" },
+                { "01", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "01" },
+                { "01", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "01" },
+                { "01", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "01" },
+                { "01", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "01" },
                 { "01", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "01" },
                 { "01", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "01" },
                 { "01", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "09", "01" },
@@ -77,10 +95,37 @@ namespace GameProject
             };//сделать чтение из xml файла например
             wallTexture = Content.Load<Texture2D>("Images/Wall");
             floorTexture = Content.Load<Texture2D>("Images/Floor"); 
-            tilemap = new Tilemap(tileData, 50, 50, wallTexture, floorTexture);           
+            keyTexture = Content.Load<Texture2D>("Images/Key");
+            key2Texture = Content.Load<Texture2D>("Images/Key2");
+            doorTexture = Content.Load<Texture2D>("Images/Door");
+            tilemap = new Tilemap(tileData, 50, 50, wallTexture, floorTexture, doorTexture);  
+            tilemap.SpaunItem(keyTexture, keysToCollect);
+            player.collision.TileCollisionDetected +=
+                (tile) =>
+                {
+                    if (tile.IsWall || tile.IsClosedDoor)
+                        player.Block();
+                    if (tile.IsKey)
+                    {
+                        tilemap.Update((tile.TileIndex.Y, tile.TileIndex.X), key2Texture);
+                        player.KeysCollected++;
+                        patrolTargets[patrolTargets.IndexOf((tile.TileIndex.Y, tile.TileIndex.X))] = tilemap.GetRandomFloorTileIndex();
+                    }
+                    if (tile.IsOpenDoor)
+                    {
+                        //TODO: переход на сцену конца.
+                        player.Block();
+                    }
+                };
+            player.OnAllKeysCollected += () =>
+            {
+                var index = tilemap.GetDoorIndex();
+                tilemap.Update(index, floorTexture);
+                tilemap.tiles[index.Y, index.X].IsOpenDoor = true;
+            };
             worldWidth = tilemap.tiles.GetLength(1) * tilemap.TileWidth;
             worldHeight = tilemap.tiles.GetLength(0) * tilemap.TileHeight;
-            patrolTargets = new List<(int X, int Y)> { (15, 11), (2, 2), (5, 7) };
+            patrolTargets = tilemap.GetKeysIndexes();
             enemy = new Enemy(enemyTexture, 0.01f, tilemap);
             enemy.OnAttack += () => player.TakeDamage(30);
             uiPresenter = new UIPresenter(new UIModel(10, 10, 100, 100), new UIView());
@@ -129,7 +174,7 @@ namespace GameProject
                 }
             }
 
-            CheckTilesCollision(tilemap, player.positionComponent, player.collision, player.Block);
+            CheckTilesCollision(tilemap, player.positionComponent, player.collision, player.collision.TileCollisionDetected);
 
             Rectangle cameraBounds = camera.GetCameraBounds();
             GetCameraCollision(player.collision, cameraBounds);
@@ -229,7 +274,7 @@ namespace GameProject
         }
 
         private void CheckTilesCollision(Tilemap tilemap, PositionComponent currentPosition, 
-            CollisionComponent collision, Action colAction)
+            CollisionComponent collision, Action<Tile> colAction)
         {
             int tileX = (int)(currentPosition.X / tilemap.TileWidth);
             int tileY = (int)(currentPosition.Y / tilemap.TileHeight);
@@ -247,8 +292,7 @@ namespace GameProject
                         if (CheckRectangleCollision(collision,
                             tilemap.tiles[nTileY, nTileX].collision))
                         {
-                            if (tilemap.tiles[nTileY, nTileX].IsWall)//добавить 1 action и подписывать на него действия
-                                colAction();//Action<Tile>: colAction = (tile) => { if (tile.IsWall) player.Block(); else player.Unblock(); }
+                            colAction(tilemap.tiles[nTileY, nTileX]);
                         }
                     }
                 }

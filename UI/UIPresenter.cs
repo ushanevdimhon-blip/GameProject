@@ -1,4 +1,6 @@
-﻿using Microsoft.Xna.Framework.Graphics;
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,10 +20,30 @@ namespace GameProject.UI
             this.view = view;
         }
 
-        public void Update(int health, float stamina)
+        public void Update(int health = 0, float stamina = 0, MouseState mouse = default)
         {
-            model.health = health;
-            model.stamina = stamina;
+            switch(model.currentScene)
+            {
+                case Scenes.Menu:
+                    if (model.playButtonRect.Contains(mouse.X, mouse.Y))
+                    {
+                        model.playButtonColor = Color.DarkGray;
+                    }
+                    else if (model.quitButtonRect.Contains(mouse.X, mouse.Y))
+                    {
+                        model.quitButtonColor = Color.DarkRed;
+                    }
+                    else
+                    {
+                        model.playButtonColor = Color.LightGray;
+                        model.quitButtonColor = Color.Red;
+                    }
+                    break;
+                case Scenes.Gameplay:
+                    model.health = health;
+                    model.stamina = stamina;
+                    break;
+            }
         }
 
         public void Draw(SpriteBatch spriteBatch)

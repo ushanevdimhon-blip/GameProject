@@ -1,4 +1,6 @@
 ﻿using GameProject.Components;
+using GameProject.Entities;
+using GameProject.TilemapItems;
 using GameProject.UI;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;

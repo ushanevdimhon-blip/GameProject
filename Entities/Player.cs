@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GameProject
+namespace GameProject.Entities
 {
     public class Player
     {
@@ -45,14 +45,14 @@ namespace GameProject
         public Player(Texture2D model, float x, float y, float scale, int keysToCollect)
         {
             this.model = model;
-            this.width = model.Width * scale;
-            this.height = model.Height * scale;
+            width = model.Width * scale;
+            height = model.Height * scale;
             this.keysToCollect = keysToCollect;
             positionComponent = new PositionComponent(x, y);
             speedComponent = new SpeedComponent(100.0f);
             render = new RenderComponent(model, scale);
             input = new InputComponent(speedComponent);
-            collision = new CollisionComponent(positionComponent, this.width, this.height);
+            collision = new CollisionComponent(positionComponent, width, height);
             healthComponent = new HealthComponent(100);
 
             OnDeath += () => Debug.WriteLine("Player died!");

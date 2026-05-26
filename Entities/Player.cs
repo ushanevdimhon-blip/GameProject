@@ -49,7 +49,7 @@ namespace GameProject.Entities
             height = model.Height * scale;
             this.keysToCollect = keysToCollect;
             positionComponent = new PositionComponent(x, y);
-            speedComponent = new SpeedComponent(100.0f);
+            speedComponent = new SpeedComponent(140.0f);//сделать константой
             render = new RenderComponent(model, scale);
             input = new InputComponent(speedComponent);
             collision = new CollisionComponent(positionComponent, width, height);

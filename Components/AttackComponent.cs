@@ -18,7 +18,7 @@ namespace GameProject.Components
 
         public void Attack(Action OnAttack, Action OnCooldown)
         {
-            if (cooldown >= 3.0f)
+            if (cooldown >= 4.0f)//сделать константой
             {
                 OnAttack?.Invoke();
                 cooldown = 0.0f;
@@ -32,7 +32,7 @@ namespace GameProject.Components
         public void Update(GameTime gameTime)
         {
             cooldown += (float)gameTime.ElapsedGameTime.TotalSeconds;
-            cooldown = Math.Min(cooldown, 3.0f);
+            cooldown = Math.Min(cooldown, 4.0f);//сделать константой
         }
     }
 }

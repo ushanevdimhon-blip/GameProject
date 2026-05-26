@@ -19,7 +19,7 @@ namespace GameProject.Components
         public PatrolComponent(Tilemap tilemap)
         {
             this.tilemap = tilemap;
-            this.chaseComponent = new ChaseComponent(tilemap, 0.2f, 100.0f);
+            this.chaseComponent = new ChaseComponent(tilemap, 0.2f, 120.0f);//сделать константой
         }
 
         public void Patrol(PositionComponent currentPosition, List<(int X, int Y)> targetsPositions, GameTime gameTime)

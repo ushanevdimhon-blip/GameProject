@@ -41,20 +41,20 @@ namespace GameProject.Entities
             width = model.Width * scale;
             height = model.Height * scale;
             render = new RenderComponent(model, scale);
-            positionComponent = new PositionComponent(200, 200);
+            positionComponent = new PositionComponent(800, 400);
             patrol = new PatrolComponent(tilemap);
-            collision = new CollisionComponent(positionComponent, width*1.5f, height*1.5f, 150);
-            chaseComponent = new ChaseComponent(tilemap, 0.1f, 150.0f);
-            attackComponent = new AttackComponent(3.0f);
+            collision = new CollisionComponent(positionComponent, width*1.5f, height*1.5f, 300);
+            chaseComponent = new ChaseComponent(tilemap, 0.1f, 180.0f);//сделать константой
+            attackComponent = new AttackComponent(4.0f);//сделать константой
 
-            OnCooldown += () => { chaseComponent.ChangeMovementSpeed(50.0f); };
+            OnCooldown += () => { chaseComponent.ChangeMovementSpeed(50.0f); };//сделать константой
         }
 
         public void Update(GameTime gameTime)
         {
             attackComponent.Update(gameTime);
-            if (attackComponent.cooldown >= 3.0f)
-                chaseComponent.ChangeMovementSpeed(150.0f);
+            if (attackComponent.cooldown >= 4.0f)//сделать константой
+                chaseComponent.ChangeMovementSpeed(180.0f);//сделать константой
             collision.UpdateRectangleCollision();
             collision.UpdateCircleCollision();
         }

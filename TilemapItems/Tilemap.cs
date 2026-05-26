@@ -11,46 +11,72 @@ namespace GameProject.TilemapItems
     public class Tilemap
     {
         public Tile[,] tiles;
+        Texture2D wallTexture;
+        Texture2D floorTexture;
+        Texture2D doorTexture;
+
         public int TileWidth { get; private set; }
         public int TileHeight { get; private set; }
 
-        public Tilemap(string[,] tileData, int tileWidth, int tileHeight, Texture2D wallTexture, 
+        public Tilemap(int tileWidth, int tileHeight, Texture2D wallTexture, 
             Texture2D floorTexture, Texture2D doorTexture)
         {
             TileWidth = tileWidth;
             TileHeight = tileHeight;
+            this.wallTexture = wallTexture;
+            this.floorTexture = floorTexture;
+            this.doorTexture = doorTexture;
+        }
+
+        public void Create(string[,] tileData)
+        {
             tiles = new Tile[tileData.GetLength(0), tileData.GetLength(1)];
 
             for (int i = 0; i < tileData.GetLength(0); i++)
             {
                 for (int j = 0; j < tileData.GetLength(1); j++)
                 {
-                    float x = tileWidth / 2 + j * tileWidth;
-                    float y = tileHeight / 2 + i * tileHeight;
+                    float x = TileWidth / 2 + j * TileWidth;
+                    float y = TileHeight / 2 + i * TileHeight;
 
-                    if (tileData[i, j] == "01")
+                    if (tileData[i, j] == "1")
                     {
-                        var tile = new Tile((i, j), tileWidth, tileHeight, new PositionComponent(x, y), wallTexture);
+                        var tile = new Tile((i, j), TileWidth, TileHeight, new PositionComponent(x, y), wallTexture);
                         tile.IsWall = true;
                         tile.Price = 10;
                         tiles[i, j] = tile;
-                    }                  
-                    else if (tileData[i, j] == "09")
+                    }
+                    else if (tileData[i, j] == "2")
                     {
-                        var tile = new Tile((i, j), tileWidth, tileHeight, new PositionComponent(x, y), floorTexture);
+                        var tile = new Tile((i, j), TileWidth, TileHeight, new PositionComponent(x, y), floorTexture);
                         tile.IsFloor = true;
                         tile.Price = 1;
                         tiles[i, j] = tile;
                     }
-                    else if (tileData[i, j] == "02")
+                    else if (tileData[i, j] == "3")
                     {
-                        var tile = new Tile((i, j), tileWidth, tileHeight, new PositionComponent(x, y), doorTexture);
+                        var tile = new Tile((i, j), TileWidth, TileHeight, new PositionComponent(x, y), doorTexture);
                         tile.IsClosedDoor = true;
                         tile.Price = 10;
                         tiles[i, j] = tile;
                     }
                 }
             }
+        }
+
+        public string[,] FromFile(string fileName)
+        {
+            var lines = System.IO.File.ReadAllLines(fileName);
+            var tileData = new string[lines.Length, lines[0].Length];
+            for (int i = 0; i < lines.Length; i++)
+            {
+                var values = lines[i];
+                for (int j = 0; j < values.Length; j++)
+                {
+                    tileData[i, j] = values[j].ToString();
+                }
+            }
+            return tileData;
         }
 
         public void SpaunItem(Texture2D itemTexture, int itemCount)//пока спаунит только ключи

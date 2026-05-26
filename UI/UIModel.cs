@@ -27,6 +27,7 @@ namespace GameProject.UI
         public Color quitButtonColor;
         public SpriteFont arialFont;
         public Scenes currentScene;
+        public string menuTitle;
 
         public UIModel(int x, int y, int health, float stamina)
         {
@@ -39,12 +40,13 @@ namespace GameProject.UI
             maxStamina = stamina;
         }
 
-        public UIModel(Rectangle playButtonRect, Rectangle quitButtonRect, SpriteFont arialFont)
+        public UIModel(Rectangle playButtonRect, Rectangle quitButtonRect, SpriteFont arialFont, string menuTitle)
         {
             currentScene = Scenes.Menu;
             this.playButtonRect = playButtonRect;
             this.quitButtonRect = quitButtonRect;
             this.arialFont = arialFont;
+            this.menuTitle = menuTitle;
             this.playButtonColor = Color.LightGray;
             this.quitButtonColor = Color.Red;
         }

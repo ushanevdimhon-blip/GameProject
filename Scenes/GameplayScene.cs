@@ -124,9 +124,9 @@ namespace GameProject.Scenes
             player.OnDeath += () => OnGameOver.Invoke();
 
             enemy = new Enemy(enemyTexture, 0.01f, tilemap);
-            enemy.OnAttack += () => player.TakeDamage(30);
+            enemy.OnAttack += () => player.TakeDamage(40);
             
-            uiPresenter = new UIPresenter(new UIModel(10, 10, 100, 100), new UIView());
+            uiPresenter = new UIPresenter(new UIModel(10, 10, 100, 100), new UIView(_graphicsDevice));
 
             camera = new Camera(_graphicsDevice.PresentationParameters.BackBufferWidth,
                 _graphicsDevice.PresentationParameters.BackBufferHeight);

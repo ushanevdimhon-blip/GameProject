@@ -16,33 +16,37 @@ namespace GameProject.Scenes
         UIPresenter uiPresenter;
         Rectangle playButtonRect;
         Rectangle quitButtonRect;
+        Color backgroundColor;
+        string menuTitle;
+        int screenWidth;
+        int screenHeight;
 
         public Action OnPlayGame;
         public Action OnQuitGame;
 
-        public MenuScene(GraphicsDevice graphicsDevice, ContentManager contentManager)
+        public MenuScene(GraphicsDevice graphicsDevice, ContentManager contentManager, 
+            Color backgroundColor, string menuTitle)
         {
             _graphicsDevice = graphicsDevice;
             Content = contentManager;
+            this.backgroundColor = backgroundColor;
+            this.menuTitle = menuTitle;
         }
 
         public override void LoadContent()
         {
             _spriteBatch = new SpriteBatch(_graphicsDevice);
 
-            int screenWidth = _graphicsDevice.PresentationParameters.BackBufferWidth;
-            int screenHeight = _graphicsDevice.PresentationParameters.BackBufferHeight;
+            screenWidth = _graphicsDevice.PresentationParameters.BackBufferWidth;
+            screenHeight = _graphicsDevice.PresentationParameters.BackBufferHeight;
 
             playButtonRect = new Rectangle(screenWidth / 2 - 100, screenHeight / 2 - 100, 200, 60);
             quitButtonRect = new Rectangle(screenWidth / 2 - 100, screenHeight / 2 + 20, 200, 60);
 
-            var pixel = new Texture2D(_graphicsDevice, 1, 1);
-            pixel.SetData(new[] { Color.White });
-
             var arialFont = Content.Load<SpriteFont>("Fonts/Arial");
 
-            uiModel = new UIModel(playButtonRect, quitButtonRect, arialFont);
-            uiView = new UIView();
+            uiModel = new UIModel(playButtonRect, quitButtonRect, arialFont, menuTitle);
+            uiView = new UIView(_graphicsDevice);
             uiPresenter = new UIPresenter(uiModel, uiView);
         }
 
@@ -67,7 +71,7 @@ namespace GameProject.Scenes
 
         public override void Draw(GameTime gameTime)
         {
-            _graphicsDevice.Clear(Color.Beige);
+            _graphicsDevice.Clear(backgroundColor);
             _spriteBatch.Begin();
 
             uiPresenter.Draw(_spriteBatch);

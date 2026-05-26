@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System;
 using System.Diagnostics;
 
 namespace GameProject
@@ -21,7 +22,7 @@ namespace GameProject
 
         protected override void Initialize()
         {
-            MenuScene menuScene = new MenuScene(GraphicsDevice, Content);
+            MenuScene menuScene = new MenuScene(GraphicsDevice, Content, Color.Beige, "Play Game");
             currentScene = menuScene;
             currentScene.Initialize();
 
@@ -73,7 +74,7 @@ namespace GameProject
         {
             gameplayScene.OnGameOver += () =>
             {
-                MenuScene newMenuScene = new MenuScene(GraphicsDevice, Content);
+                MenuScene newMenuScene = new MenuScene(GraphicsDevice, Content, Color.IndianRed, "You've lost");
                 IsMouseVisible = true;
                 ChangeScene(newMenuScene);
                 SubscribeToMenuActions(newMenuScene);
@@ -81,7 +82,7 @@ namespace GameProject
 
             gameplayScene.OnGameWon += () =>
             {
-                MenuScene newMenuScene = new MenuScene(GraphicsDevice, Content);
+                MenuScene newMenuScene = new MenuScene(GraphicsDevice, Content, Color.YellowGreen, "You won!");
                 IsMouseVisible = true;
                 ChangeScene(newMenuScene);
                 SubscribeToMenuActions(newMenuScene);

@@ -11,10 +11,11 @@ namespace GameProject.UI
     public class UIView
     {
         private Texture2D pixel;
+        public GraphicsDevice graphicsDevice;
 
-        public UIView()
+        public UIView(GraphicsDevice graphicsDevice)
         {
-            
+            this.graphicsDevice = graphicsDevice;
         }
 
         public void Draw(SpriteBatch spriteBatch, UIModel model)
@@ -56,6 +57,12 @@ namespace GameProject.UI
 
         private void DrawMenu(SpriteBatch spriteBatch, UIModel model)
         {
+            spriteBatch.DrawString(model.arialFont,
+                model.menuTitle,
+                new Vector2(graphicsDevice.PresentationParameters.BackBufferWidth/2 - model.arialFont.MeasureString(model.menuTitle).X / 2,
+                            graphicsDevice.PresentationParameters.BackBufferHeight/8 - model.arialFont.MeasureString(model.menuTitle).Y / 2),
+                Color.Black);
+
             spriteBatch.Draw(pixel, model.playButtonRect, model.playButtonColor);
             spriteBatch.DrawString(model.arialFont,
                 "Play",

@@ -22,6 +22,7 @@ namespace GameProject.Entities
 
         public Action OnDeath;
         public Action OnDamage;
+        public Action OnHeal;
         public Action OnAllKeysCollected;
 
         float width;
@@ -40,6 +41,7 @@ namespace GameProject.Entities
         public float Height { get { return height; } private set { height = value; } }
 
         public int Health { get { return healthComponent.Health; } }
+        public int MaxHealth { get { return healthComponent.MaxHealth; } }
         public float Stamina { get { return input.speedComponent.stamina; } }
 
         public Player(Texture2D model, float x, float y, float scale, int keysToCollect)
@@ -78,6 +80,11 @@ namespace GameProject.Entities
         public void TakeDamage(int damage)
         {
             healthComponent.TakeDamage(damage, OnDamage, OnDeath);
+        }
+
+        public void Heal(int hp)
+        {
+            healthComponent.Heal(hp, OnHeal);
         }
 
         public void Block()

@@ -14,15 +14,11 @@ namespace GameProject.TilemapItems
         public PositionComponent position;
         public CollisionComponent collision;
         RenderComponent render;
+        public TileType Type { get; set; }
         public int TileWidth { get; private set; }
         public int TileHeight { get; private set; }
         public (int X, int Y) TileIndex { get; set; }
         public int Price { get; set; }
-        public bool IsWall { get; set; }
-        public bool IsFloor { get; set; }
-        public bool IsKey { get; set; }
-        public bool IsClosedDoor { get; set; }
-        public bool IsOpenDoor { get; set; }
 
         public Tile((int X, int Y) TileIndex, int tileWidth, int tileHeight, PositionComponent position, Texture2D model)
         {

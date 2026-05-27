@@ -24,12 +24,14 @@ namespace GameProject.Scenes
         Texture2D keyTexture;
         Texture2D key2Texture;
         Texture2D doorTexture;
+        Texture2D medTexture;
         Camera camera;
         UIPresenter uiPresenter;
         float worldWidth;
         float worldHeight;
         List<(int X, int Y)> patrolTargets;
         int keysToCollect = 20;
+        int meds = 5;
         float delay = 3.0f;
         bool isDetected = false;
 
@@ -54,10 +56,12 @@ namespace GameProject.Scenes
             keyTexture = Content.Load<Texture2D>("Images/Key");
             key2Texture = Content.Load<Texture2D>("Images/Key2");
             doorTexture = Content.Load<Texture2D>("Images/Door");
+            medTexture = Content.Load<Texture2D>("Images/med");
 
             tilemap = new Tilemap(90, 90, wallTexture, floorTexture, doorTexture);
             tilemap.Create(tilemap.FromFile("map.txt"));
-            tilemap.SpaunItem(keyTexture, keysToCollect);
+            tilemap.SpaunItem(TileType.Key, keyTexture, keysToCollect);
+            tilemap.SpaunItem(TileType.Medicine, medTexture, meds);
 
             worldWidth = tilemap.tiles.GetLength(1) * tilemap.TileWidth;
             worldHeight = tilemap.tiles.GetLength(0) * tilemap.TileHeight;
@@ -66,15 +70,23 @@ namespace GameProject.Scenes
             player = new Player(playerTexture, 800, 700, 0.15f, keysToCollect);
             player.collision.TileCollisionDetected += (tile) =>
             {
-                if (tile.IsWall || tile.IsClosedDoor)
+                if (tile.Type == TileType.Wall || tile.Type == TileType.ClosedDoor)
                     player.Block();
-                if (tile.IsKey)
+                if (tile.Type == TileType.Key)
                 {
-                    tilemap.Update((tile.TileIndex.Y, tile.TileIndex.X), key2Texture);
+                    tilemap.Update((tile.TileIndex.Y, tile.TileIndex.X), key2Texture, TileType.Floor);
                     player.KeysCollected++;
                     patrolTargets[patrolTargets.IndexOf((tile.TileIndex.Y, tile.TileIndex.X))] = tilemap.GetRandomFloorTileIndex();
                 }
-                if (tile.IsOpenDoor)
+                if (tile.Type == TileType.Medicine)
+                {
+                    if (player.Health != player.MaxHealth)
+                    {
+                        tilemap.Update((tile.TileIndex.Y, tile.TileIndex.X), floorTexture, TileType.Floor);
+                        player.Heal(20);
+                    }   
+                }
+                if (tile.Type == TileType.OpenDoor)
                 {
                     OnGameWon.Invoke();
                     player.Block();
@@ -83,8 +95,7 @@ namespace GameProject.Scenes
             player.OnAllKeysCollected += () =>
             {
                 var index = tilemap.GetDoorIndex();
-                tilemap.Update(index, floorTexture);
-                tilemap.tiles[index.Y, index.X].IsOpenDoor = true;
+                tilemap.Update(index, floorTexture, TileType.OpenDoor);
             };
             player.OnDeath += () => OnGameOver.Invoke();
 
@@ -188,7 +199,7 @@ namespace GameProject.Scenes
                 float t = (float)i / steps;
                 int col = (int)((enemyPosition.X + dx * t) / map.TileWidth);
                 int row = (int)((enemyPosition.Y + dy * t) / map.TileWidth);
-                if (map.tiles[row, col].IsWall)
+                if (map.tiles[row, col].Type == TileType.Wall)
                     return false;
             }
             return true;

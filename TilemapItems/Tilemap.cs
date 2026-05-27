@@ -2,12 +2,22 @@
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace GameProject.TilemapItems
 {
+    public enum TileType
+    {
+        Wall,
+        Floor,
+        ClosedDoor,
+        OpenDoor,
+        Medicine,
+        Key
+    }
     public class Tilemap
     {
         public Tile[,] tiles;
@@ -42,21 +52,21 @@ namespace GameProject.TilemapItems
                     if (tileData[i, j] == "1")
                     {
                         var tile = new Tile((i, j), TileWidth, TileHeight, new PositionComponent(x, y), wallTexture);
-                        tile.IsWall = true;
+                        tile.Type = TileType.Wall;
                         tile.Price = 10;
                         tiles[i, j] = tile;
                     }
                     else if (tileData[i, j] == "2")
                     {
                         var tile = new Tile((i, j), TileWidth, TileHeight, new PositionComponent(x, y), floorTexture);
-                        tile.IsFloor = true;
+                        tile.Type = TileType.Floor;
                         tile.Price = 1;
                         tiles[i, j] = tile;
                     }
                     else if (tileData[i, j] == "3")
                     {
                         var tile = new Tile((i, j), TileWidth, TileHeight, new PositionComponent(x, y), doorTexture);
-                        tile.IsClosedDoor = true;
+                        tile.Type = TileType.ClosedDoor;
                         tile.Price = 10;
                         tiles[i, j] = tile;
                     }
@@ -79,14 +89,14 @@ namespace GameProject.TilemapItems
             return tileData;
         }
 
-        public void SpaunItem(Texture2D itemTexture, int itemCount)//пока спаунит только ключи
+        public void SpaunItem(TileType tileType, Texture2D itemTexture, int itemCount)//пока спаунит только ключи
         {
             var rand = new Random();
             while (itemCount > 0)
             {
                 int row = rand.Next(tiles.GetLength(0));
                 int col = rand.Next(tiles.GetLength(1));
-                if (tiles[row, col].IsFloor)
+                if (tiles[row, col].Type == TileType.Floor)
                 {
                     var tile = new Tile(
                         (row, col), 
@@ -94,7 +104,7 @@ namespace GameProject.TilemapItems
                         TileHeight, 
                         new PositionComponent(tiles[row, col].position.X, tiles[row, col].position.Y), 
                         itemTexture);
-                    tile.IsKey = true;
+                    tile.Type = tileType;
                     tile.Price = 5;
                     tiles[row, col] = tile;
                     itemCount--;
@@ -109,7 +119,7 @@ namespace GameProject.TilemapItems
             {
                 for (int j = 0; j < tiles.GetLength(1); j++)
                 {
-                    if (tiles[i, j].IsKey)
+                    if (tiles[i, j].Type == TileType.Key)
                     {
                         keysIndexes.Add((j, i));
                     }
@@ -124,7 +134,7 @@ namespace GameProject.TilemapItems
             {
                 for (int j = 0; j < tiles.GetLength(1); j++)
                 {
-                    if (tiles[i, j].IsClosedDoor)
+                    if (tiles[i, j].Type == TileType.ClosedDoor)
                     {
                         return (j, i);
                     }
@@ -141,7 +151,7 @@ namespace GameProject.TilemapItems
 
             while (true)
             {
-                if (tiles[row, col].IsFloor)
+                if (tiles[row, col].Type == TileType.Floor)
                 {
                     return (col, row);
                 }
@@ -150,7 +160,7 @@ namespace GameProject.TilemapItems
             }
         }
 
-        public void Update((int X, int Y) index, Texture2D newTexture)
+        public void Update((int X, int Y) index, Texture2D newTexture, TileType newType)
         {
             tiles[index.Y, index.X] = new Tile(
                 (index.Y, index.X),
@@ -158,6 +168,7 @@ namespace GameProject.TilemapItems
                 TileHeight,
                 new PositionComponent(tiles[index.Y, index.X].position.X, tiles[index.Y, index.X].position.Y),
                 newTexture);
+            tiles[index.Y, index.X].Type = newType;
         }
 
         public void Draw(SpriteBatch spriteBatch, int startCol, int endCol, int startRow, int endRow)

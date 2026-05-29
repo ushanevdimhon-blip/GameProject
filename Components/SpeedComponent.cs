@@ -11,16 +11,18 @@ namespace GameProject.Components
     public class SpeedComponent
     {
         public float stamina;
+        public float MaxStamina { get; set; }
         public bool isSprinting;
         public float velocity;
         public float baseVelocity;
         public float delay;
 
-        public SpeedComponent(float velocity)
+        public SpeedComponent(float velocity, float stamina)
         {
             this.baseVelocity = velocity;
             this.velocity = velocity;
-            stamina = 100;
+            MaxStamina = stamina;
+            this.stamina = stamina;
         }
 
         public void Sprinting()
@@ -57,6 +59,12 @@ namespace GameProject.Components
                 isSprinting = false;
                 delay += deltaTime;
             }
+        }
+
+        public void RestoreStamina()
+        {
+            stamina = MaxStamina;
+            delay = 0;
         }
     }
 }

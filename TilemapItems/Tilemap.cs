@@ -16,6 +16,7 @@ namespace GameProject.TilemapItems
         ClosedDoor,
         OpenDoor,
         Medicine,
+        Boost,
         Key
     }
     public class Tilemap

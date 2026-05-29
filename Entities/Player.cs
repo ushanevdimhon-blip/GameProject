@@ -43,6 +43,7 @@ namespace GameProject.Entities
         public int Health { get { return healthComponent.Health; } }
         public int MaxHealth { get { return healthComponent.MaxHealth; } }
         public float Stamina { get { return input.speedComponent.stamina; } }
+        public float MaxStamina { get { return input.speedComponent.MaxStamina; } }
 
         public Player(Texture2D model, float x, float y, float scale, int keysToCollect)
         {
@@ -51,7 +52,7 @@ namespace GameProject.Entities
             height = model.Height * scale;
             this.keysToCollect = keysToCollect;
             positionComponent = new PositionComponent(x, y);
-            speedComponent = new SpeedComponent(140.0f);//сделать константой
+            speedComponent = new SpeedComponent(140.0f, 100.0f);//сделать константой
             render = new RenderComponent(model, scale);
             input = new InputComponent(speedComponent);
             collision = new CollisionComponent(positionComponent, width, height);
@@ -85,6 +86,11 @@ namespace GameProject.Entities
         public void Heal(int hp)
         {
             healthComponent.Heal(hp, OnHeal);
+        }
+
+        public void RestoreStamina()
+        {
+            speedComponent.RestoreStamina();
         }
 
         public void Block()

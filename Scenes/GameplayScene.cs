@@ -25,6 +25,7 @@ namespace GameProject.Scenes
         Texture2D key2Texture;
         Texture2D doorTexture;
         Texture2D medTexture;
+        Texture2D boostTexture;
         Camera camera;
         UIPresenter uiPresenter;
         float worldWidth;
@@ -32,6 +33,7 @@ namespace GameProject.Scenes
         List<(int X, int Y)> patrolTargets;
         int keysToCollect = 20;
         int meds = 5;
+        int boosts = 5;
         float delay = 3.0f;
         bool isDetected = false;
 
@@ -57,11 +59,13 @@ namespace GameProject.Scenes
             key2Texture = Content.Load<Texture2D>("Images/Key2");
             doorTexture = Content.Load<Texture2D>("Images/Door");
             medTexture = Content.Load<Texture2D>("Images/med");
+            boostTexture = Content.Load<Texture2D>("Images/boost");
 
             tilemap = new Tilemap(90, 90, wallTexture, floorTexture, doorTexture);
             tilemap.Create(tilemap.FromFile("map.txt"));
             tilemap.SpaunItem(TileType.Key, keyTexture, keysToCollect);
             tilemap.SpaunItem(TileType.Medicine, medTexture, meds);
+            tilemap.SpaunItem(TileType.Boost, boostTexture, boosts);
 
             worldWidth = tilemap.tiles.GetLength(1) * tilemap.TileWidth;
             worldHeight = tilemap.tiles.GetLength(0) * tilemap.TileHeight;
@@ -85,6 +89,14 @@ namespace GameProject.Scenes
                         tilemap.Update((tile.TileIndex.Y, tile.TileIndex.X), floorTexture, TileType.Floor);
                         player.Heal(20);
                     }   
+                }
+                if (tile.Type == TileType.Boost)
+                {
+                    if (player.Stamina != player.MaxStamina)
+                    {
+                        tilemap.Update((tile.TileIndex.Y, tile.TileIndex.X), floorTexture, TileType.Floor);
+                        player.RestoreStamina();
+                    }
                 }
                 if (tile.Type == TileType.OpenDoor)
                 {

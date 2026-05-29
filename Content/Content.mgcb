@@ -68,6 +68,18 @@
 /processorParam:TextureFormat=Color
 /build:images/5053745_0.jpg
 
+#begin images/boost.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:images/boost.png
+
 #begin images/Generated Image May 18, 2026 - 5_43PM.png
 /importer:TextureImporter
 /processor:TextureProcessor

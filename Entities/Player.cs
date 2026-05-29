@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GameProject
+namespace GameProject.Entities
 {
     public class Player
     {
@@ -22,6 +22,7 @@ namespace GameProject
 
         public Action OnDeath;
         public Action OnDamage;
+        public Action OnHeal;
         public Action OnAllKeysCollected;
 
         float width;
@@ -40,19 +41,20 @@ namespace GameProject
         public float Height { get { return height; } private set { height = value; } }
 
         public int Health { get { return healthComponent.Health; } }
+        public int MaxHealth { get { return healthComponent.MaxHealth; } }
         public float Stamina { get { return input.speedComponent.stamina; } }
 
         public Player(Texture2D model, float x, float y, float scale, int keysToCollect)
         {
             this.model = model;
-            this.width = model.Width * scale;
-            this.height = model.Height * scale;
+            width = model.Width * scale;
+            height = model.Height * scale;
             this.keysToCollect = keysToCollect;
             positionComponent = new PositionComponent(x, y);
-            speedComponent = new SpeedComponent(100.0f);
+            speedComponent = new SpeedComponent(140.0f);//сделать константой
             render = new RenderComponent(model, scale);
             input = new InputComponent(speedComponent);
-            collision = new CollisionComponent(positionComponent, this.width, this.height);
+            collision = new CollisionComponent(positionComponent, width, height);
             healthComponent = new HealthComponent(100);
 
             OnDeath += () => Debug.WriteLine("Player died!");
@@ -78,6 +80,11 @@ namespace GameProject
         public void TakeDamage(int damage)
         {
             healthComponent.TakeDamage(damage, OnDamage, OnDeath);
+        }
+
+        public void Heal(int hp)
+        {
+            healthComponent.Heal(hp, OnHeal);
         }
 
         public void Block()

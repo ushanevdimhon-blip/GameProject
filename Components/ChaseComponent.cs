@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using GameProject.TilemapItems;
+using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -117,22 +118,22 @@ namespace GameProject.Components
         {
             if (position.X + 1 >= 0 && position.X + 1 < tilemap.tiles.GetLength(1) &&
                    position.Y >= 0 && position.Y < tilemap.tiles.GetLength(0) &&
-                   !tilemap.tiles[position.Y, position.X + 1].IsWall)
+                   tilemap.tiles[position.Y, position.X + 1].Type != TileType.Wall)
                 yield return (position.X + 1, position.Y);
 
             if (position.X - 1 >= 0 && position.X - 1 < tilemap.tiles.GetLength(1) &&
                    position.Y >= 0 && position.Y < tilemap.tiles.GetLength(0) &&
-                   !tilemap.tiles[position.Y, position.X - 1].IsWall)
+                   tilemap.tiles[position.Y, position.X - 1].Type != TileType.Wall)
                 yield return (position.X - 1, position.Y);
 
             if (position.X >= 0 && position.X < tilemap.tiles.GetLength(1) &&
                    position.Y + 1 >= 0 && position.Y + 1 < tilemap.tiles.GetLength(0) &&
-                   !tilemap.tiles[position.Y + 1, position.X].IsWall)
+                   tilemap.tiles[position.Y + 1, position.X].Type != TileType.Wall)
                 yield return (position.X, position.Y + 1);
 
             if (position.X >= 0 && position.X < tilemap.tiles.GetLength(1) &&
                    position.Y - 1 >= 0 && position.Y - 1 < tilemap.tiles.GetLength(0) &&
-                   !tilemap.tiles[position.Y - 1, position.X].IsWall)
+                   tilemap.tiles[position.Y - 1, position.X].Type != TileType.Wall)
                 yield return (position.X, position.Y - 1);
         }
 

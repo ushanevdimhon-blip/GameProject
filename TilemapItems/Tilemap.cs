@@ -89,7 +89,7 @@ namespace GameProject.TilemapItems
             return tileData;
         }
 
-        public void SpaunItem(TileType tileType, Texture2D itemTexture, int itemCount)//пока спаунит только ключи
+        public void SpaunItem(TileType tileType, Texture2D itemTexture, int itemCount)
         {
             var rand = new Random();
             while (itemCount > 0)
@@ -143,7 +143,7 @@ namespace GameProject.TilemapItems
             return (-1, -1);
         }
 
-        public (int X, int Y) GetRandomFloorTileIndex()//почему путает координаты и вылетает за пределы массива 
+        public (int X, int Y) GetRandomFloorTileIndex()
         {
             var rand = new Random();
             int row = rand.Next(2, tiles.GetLength(0)-2);

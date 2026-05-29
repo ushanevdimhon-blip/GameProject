@@ -28,10 +28,12 @@ namespace GameProject.Scenes
         Texture2D boostTexture;
         Camera camera;
         UIPresenter uiPresenter;
+        UIModel uiModel;
+        UIView uiView;
         float worldWidth;
         float worldHeight;
         List<(int X, int Y)> patrolTargets;
-        int keysToCollect = 20;
+        int keysToCollect = 1;
         int meds = 5;
         int boosts = 5;
         float delay = 3.0f;
@@ -53,13 +55,14 @@ namespace GameProject.Scenes
 
             playerTexture = Content.Load<Texture2D>("Images/5053745_0");
             enemyTexture = Content.Load<Texture2D>("Images/vecteezy_angry-face-emoji-png-file_11997334");
-            wallTexture = Content.Load<Texture2D>("Images/Wall");
-            floorTexture = Content.Load<Texture2D>("Images/Floor");
-            keyTexture = Content.Load<Texture2D>("Images/Key");
-            key2Texture = Content.Load<Texture2D>("Images/Key2");
-            doorTexture = Content.Load<Texture2D>("Images/Door");
-            medTexture = Content.Load<Texture2D>("Images/med");
-            boostTexture = Content.Load<Texture2D>("Images/boost");
+            wallTexture = Content.Load<Texture2D>("Images/wall_old");
+            floorTexture = Content.Load<Texture2D>("Images/floor_old_3");
+            keyTexture = Content.Load<Texture2D>("Images/Key_old");
+            key2Texture = Content.Load<Texture2D>("Images/Key2_old");
+            doorTexture = Content.Load<Texture2D>("Images/door_old");
+            medTexture = Content.Load<Texture2D>("Images/med_old");
+            boostTexture = Content.Load<Texture2D>("Images/boost_old_2");
+            var arialFont = Content.Load<SpriteFont>("Fonts/Arial");
 
             tilemap = new Tilemap(90, 90, wallTexture, floorTexture, doorTexture);
             tilemap.Create(tilemap.FromFile("map.txt"));
@@ -70,6 +73,10 @@ namespace GameProject.Scenes
             worldWidth = tilemap.tiles.GetLength(1) * tilemap.TileWidth;
             worldHeight = tilemap.tiles.GetLength(0) * tilemap.TileHeight;
             patrolTargets = tilemap.GetKeysIndexes();
+
+            uiModel = new UIModel(10, 10, 100, 100, keysToCollect, arialFont);
+            uiView = new UIView(_graphicsDevice);
+            uiPresenter = new UIPresenter(uiModel, uiView);
 
             player = new Player(playerTexture, 800, 700, 0.15f, keysToCollect);
             player.collision.TileCollisionDetected += (tile) =>
@@ -108,13 +115,12 @@ namespace GameProject.Scenes
             {
                 var index = tilemap.GetDoorIndex();
                 tilemap.Update(index, floorTexture, TileType.OpenDoor);
+                uiModel.allButtonsPressed = true;
             };
             player.OnDeath += () => OnGameOver.Invoke();
 
             enemy = new Enemy(enemyTexture, 0.03f, tilemap);
-            enemy.OnAttack += () => player.TakeDamage(40);
-            
-            uiPresenter = new UIPresenter(new UIModel(10, 10, 100, 100), new UIView(_graphicsDevice));
+            enemy.OnAttack += () => player.TakeDamage(40);          
 
             camera = new Camera(_graphicsDevice.PresentationParameters.BackBufferWidth,
                 _graphicsDevice.PresentationParameters.BackBufferHeight);
@@ -129,7 +135,7 @@ namespace GameProject.Scenes
             camera.Clamp(worldWidth, worldHeight);
             camera.Update();
 
-            uiPresenter.Update(player.Health, player.Stamina);
+            uiPresenter.Update(gameTime, player.Health, player.Stamina, keysToCollect - player.KeysCollected);
 
             if (CheckRectangleCollision(player.collision, enemy.collision))
             {

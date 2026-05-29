@@ -20,7 +20,7 @@ namespace GameProject.UI
             this.view = view;
         }
 
-        public void Update(int health = 0, float stamina = 0, MouseState mouse = default)
+        public void Update(GameTime gameTime = null, int health = 0, float stamina = 0, int buttonsToPress = 0, MouseState mouse = default)
         {
             switch(model.currentScene)
             {
@@ -42,6 +42,10 @@ namespace GameProject.UI
                 case Scenes.Gameplay:
                     model.health = health;
                     model.stamina = stamina;
+                    if (!model.allButtonsPressed)
+                        model.buttonsToPress = buttonsToPress;
+                    else
+                        model.elapsedTimeSinceLastButtonPress += (float)gameTime.ElapsedGameTime.TotalSeconds;
                     break;
             }
         }

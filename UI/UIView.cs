@@ -53,6 +53,19 @@ namespace GameProject.UI
             spriteBatch.Draw(pixel, new Rectangle(model.X,
                 model.Y + model.barSide * 2,
                 (int)model.stamina, model.barSide), Color.Green);
+
+            if (!model.allButtonsPressed)
+                spriteBatch.DrawString(model.arialFont,
+                $"Buttons To Press: {model.buttonsToPress}",
+                new Vector2(graphicsDevice.PresentationParameters.BackBufferWidth - model.arialFont.MeasureString($"Buttons To Press: {model.buttonsToPress}").X / 2 - 40,
+                            model.arialFont.MeasureString($"Buttons To Press: {model.buttonsToPress}").Y / 2),
+                Color.White, 0.0f, Vector2.Zero, 0.5f, SpriteEffects.None, 1.0f);
+            else if (model.elapsedTimeSinceLastButtonPress <= 3.0f)
+                spriteBatch.DrawString(model.arialFont,
+                $"Door Is Open",
+                new Vector2(graphicsDevice.PresentationParameters.BackBufferWidth / 2 - model.arialFont.MeasureString($"Door Is Open").X / 2 - 40,
+                            graphicsDevice.PresentationParameters.BackBufferHeight / 2 - model.arialFont.MeasureString($"Door Is Open").Y / 2),
+                            Color.White, 0.0f, Vector2.Zero, 1.5f, SpriteEffects.None, 1.0f);
         }
 
         private void DrawMenu(SpriteBatch spriteBatch, UIModel model)

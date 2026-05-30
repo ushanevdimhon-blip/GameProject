@@ -20,6 +20,7 @@ namespace GameProject.UI
         public float stamina;
         public int health;
         public int maxHealth;
+        public int buttonsToPress;
         public float maxStamina;
         public Rectangle playButtonRect;
         public Rectangle quitButtonRect;
@@ -28,16 +29,20 @@ namespace GameProject.UI
         public SpriteFont arialFont;
         public Scenes currentScene;
         public string menuTitle;
+        public bool allButtonsPressed;
+        public float elapsedTimeSinceLastButtonPress;
 
-        public UIModel(int x, int y, int health, float stamina)
+        public UIModel(int x, int y, int health, float stamina, int buttonsToPress, SpriteFont arialFont)
         {
             currentScene = Scenes.Gameplay;
             X = x;
             Y = y;
             this.health = health;
             this.stamina = stamina;
+            this.buttonsToPress = buttonsToPress;
+            this.arialFont = arialFont;
             maxHealth = health;
-            maxStamina = stamina;
+            maxStamina = stamina;          
         }
 
         public UIModel(Rectangle playButtonRect, Rectangle quitButtonRect, SpriteFont arialFont, string menuTitle)

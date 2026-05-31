@@ -67,7 +67,7 @@ namespace GameProject.Components
 
                 if (distance > distanceToMove)
                 {
-                    direction.Normalize();//Превращает вектор в единичный вектор (длиной 1), сохраняя его направление.
+                    direction.Normalize();
                     currentPos += direction * distanceToMove;
                     break;
                 }

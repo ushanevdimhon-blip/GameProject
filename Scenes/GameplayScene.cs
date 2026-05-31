@@ -14,6 +14,7 @@ namespace GameProject.Scenes
     public class GameplayScene : Scene
     {
         SpriteBatch _spriteBatch;
+        SpriteFont arialFont;
         Player player;
         Enemy enemy;
         Texture2D playerTexture;
@@ -33,7 +34,7 @@ namespace GameProject.Scenes
         float worldWidth;
         float worldHeight;
         List<(int X, int Y)> patrolTargets;
-        int keysToCollect = 1;
+        int keysToCollect = 5;
         int meds = 5;
         int boosts = 5;
         float delay = 3.0f;
@@ -53,6 +54,8 @@ namespace GameProject.Scenes
         {
             _spriteBatch = new SpriteBatch(_graphicsDevice);
 
+            arialFont = Content.Load<SpriteFont>("Fonts/Arial");
+
             playerTexture = Content.Load<Texture2D>("Images/5053745_0");
             enemyTexture = Content.Load<Texture2D>("Images/vecteezy_angry-face-emoji-png-file_11997334");
             wallTexture = Content.Load<Texture2D>("Images/wall_old");
@@ -62,7 +65,6 @@ namespace GameProject.Scenes
             doorTexture = Content.Load<Texture2D>("Images/door_old");
             medTexture = Content.Load<Texture2D>("Images/med_old");
             boostTexture = Content.Load<Texture2D>("Images/boost_old_2");
-            var arialFont = Content.Load<SpriteFont>("Fonts/Arial");
 
             tilemap = new Tilemap(90, 90, wallTexture, floorTexture, doorTexture);
             tilemap.Create(tilemap.FromFile("map.txt"));
@@ -181,11 +183,11 @@ namespace GameProject.Scenes
             tilemap.Draw(_spriteBatch, c1, c2, r1, r2);
 
             player.Draw(_spriteBatch);
-            player.collision.DrawRectangle(_spriteBatch, Color.Green);
+            //player.collision.DrawRectangle(_spriteBatch, Color.Green);
 
             enemy.Draw(_spriteBatch);
-            enemy.collision.DrawRectangle(_spriteBatch, Color.Green);
-            enemy.collision.DrawCircle(_spriteBatch, Color.Green);
+            //enemy.collision.DrawRectangle(_spriteBatch, Color.Green);
+            //enemy.collision.DrawCircle(_spriteBatch, Color.Green);
 
             _spriteBatch.End();
 

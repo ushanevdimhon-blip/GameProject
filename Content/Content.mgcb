@@ -152,6 +152,18 @@
 /processorParam:TextureFormat=Color
 /build:images/npc01_spritesheet.png
 
+#begin images/orc1_walk_full.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:images/orc1_walk_full.png
+
 #begin images/vecteezy_angry-face-emoji-png-file_11997334.png
 /importer:TextureImporter
 /processor:TextureProcessor

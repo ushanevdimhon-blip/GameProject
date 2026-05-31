@@ -26,6 +26,8 @@ namespace GameProject.Components
             this.currentPosition = currentPosition;
             collisionRectangle = new Rectangle((int)(currentPosition.X - width / 2),
                 (int)(currentPosition.Y - height / 2), (int)width, (int)height);
+            //(int)(currentPosition.X - width / 2),(int)(currentPosition.Y - height / 2) - это для того,
+            //чтобы нарисовать прямоугольник, т.к. он рисуется от левого верхнего угла
         }
 
         public CollisionComponent(PositionComponent currentPosition, float width, float height, int radius)
@@ -55,8 +57,6 @@ namespace GameProject.Components
         {
             collisionRectangle = new Rectangle((int)(currentPosition.X - width / 2),
                 (int)(currentPosition.Y - height / 2), (int)width, (int)height);
-            //(int)(currentPosition.X - width / 2),(int)(currentPosition.Y - height / 2) - это для того,
-            //чтобы нарисовать прямоугольник, т.к. он рисуется от левого верхнего угла
         }
 
         public void UpdateCircleCollision()

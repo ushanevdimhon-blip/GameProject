@@ -16,10 +16,10 @@ namespace GameProject.Components
         int counter = 0;
         Tilemap tilemap;
 
-        public PatrolComponent(Tilemap tilemap)
+        public PatrolComponent(Tilemap tilemap, ChaseComponent chaseComponent)
         {
             this.tilemap = tilemap;
-            this.chaseComponent = new ChaseComponent(tilemap, 0.2f, 120.0f);//сделать константой
+            this.chaseComponent = chaseComponent;
         }
 
         public void Patrol(PositionComponent currentPosition, List<(int X, int Y)> targetsPositions, GameTime gameTime)
@@ -27,11 +27,12 @@ namespace GameProject.Components
             var target = targetsPositions[counter];
             float posX = tilemap.tiles[target.Y, target.X].position.X;
             float posY = tilemap.tiles[target.Y, target.X].position.Y;
+            chaseComponent.ChangeMovementSpeed(120.0f);
             chaseComponent.Chase(currentPosition, new PositionComponent(posX, posY), gameTime);
             var next = new Vector2(posX, posY);
             Vector2 direction = next - new Vector2(currentPosition.X, currentPosition.Y);
             float distance = direction.Length();
-            if (distance < 50.0f)
+            if (distance < 70.0f)
             {
                 counter++;
                 if (counter >= targetsPositions.Count)

@@ -17,6 +17,8 @@ namespace GameProject.Components
         public Action OnDown;
         public Action OnRight;
         public Action OnLeft;
+        public Action OnIdle;
+        
 
         public InputComponent(SpeedComponent speedComponent)
         {
@@ -25,6 +27,7 @@ namespace GameProject.Components
 
         public void Update(PositionComponent positionComponent, GameTime gameTime)
         {
+            bool isMoving = false;
             var key = Keyboard.GetState();
 
             if (key.IsKeyDown(Keys.LeftShift))
@@ -38,25 +41,34 @@ namespace GameProject.Components
             if (key.IsKeyDown(Keys.W))
             {
                 positionComponent.Y -= speedComponent.velocity;
-                //OnUp();
+                OnUp();
+                isMoving = true;
             }
 
             if (key.IsKeyDown(Keys.S))
             {
                 positionComponent.Y += speedComponent.velocity;
-                //OnDown();
+                OnDown();
+                isMoving = true;
             }
 
             if (key.IsKeyDown(Keys.D))
             {
                 positionComponent.X += speedComponent.velocity;
-                //OnRight();
+                OnRight();
+                isMoving = true;
             }
 
             if (key.IsKeyDown(Keys.A))
             {
                 positionComponent.X -= speedComponent.velocity;
-                //OnLeft();
+                OnLeft();
+                isMoving = true;
+            }
+
+            if (!isMoving)
+            {
+                OnIdle();
             }
         }
     }

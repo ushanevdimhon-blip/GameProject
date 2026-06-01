@@ -14,6 +14,8 @@ namespace GameProject.Animation
         private float frameDuration;
         private int currentIndex;
         private float timer;
+        public bool isLooping;
+        public bool isFinished;
 
         public float FrameDuration
         {
@@ -21,20 +23,35 @@ namespace GameProject.Animation
             set { frameDuration = value; }
         }
 
-        public AnimationComponent(SpriteSheet spriteSheet, int[] frames, float frameDuration)
+        public AnimationComponent(SpriteSheet spriteSheet, int[] frames, float frameDuration, bool isLooping)
         {
             this.spriteSheet = spriteSheet;
             this.frames = frames;
             this.frameDuration = frameDuration;
+            this.isLooping = isLooping;
         }
 
         public void Update(float deltaTime)
         {
+
             timer += deltaTime;
             if (timer >= frameDuration)
             {
                 timer -= frameDuration;
-                currentIndex = (currentIndex + 1) % frames.Length;
+                currentIndex++;
+
+                if (currentIndex >= frames.Length)
+                {
+                    if (isLooping)
+                    {
+                        currentIndex = 0;
+                    }
+                    else
+                    {
+                        currentIndex = frames.Length - 1;
+                        isFinished = true;
+                    }
+                }
             }
         }
 
@@ -47,6 +64,7 @@ namespace GameProject.Animation
         {
             currentIndex = 0;
             timer = 0;
+            isFinished = false;
         }
     }
 }

@@ -40,7 +40,7 @@ namespace GameProject.Entities
         /// </summary>
         public float Height { get { return height; } private set { height = value; } }
 
-        public Enemy(SpriteSheet sheet, Rectangle rectangle, float scale, Tilemap tilemap)
+        public Enemy(SpriteSheet sheet, SpriteSheet attackSheet, Rectangle rectangle, float scale, Tilemap tilemap)
         {
             this.model = sheet.texture;
             this.rectangle = rectangle;
@@ -50,13 +50,22 @@ namespace GameProject.Entities
             animationManager = new AnimationManager();
             //вынести в animationManager? типа init
             animationManager.Add(AnimState.WalkDown,
-                new AnimationComponent(sheet, new int[] { 0, 1, 2, 3, 4, 5 }, 0.1f));
+                new AnimationComponent(sheet, new int[] { 0, 1, 2, 3, 4, 5 }, 0.1f, true));
             animationManager.Add(AnimState.WalkUp,
-                new AnimationComponent(sheet, new int[] { 6, 7, 8, 9, 10, 11 }, 0.1f));
+                new AnimationComponent(sheet, new int[] { 6, 7, 8, 9, 10, 11 }, 0.1f, true));
             animationManager.Add(AnimState.WalkLeft,
-                new AnimationComponent(sheet, new int[] { 12, 13, 14, 15, 16, 17 }, 0.1f));
+                new AnimationComponent(sheet, new int[] { 12, 13, 14, 15, 16, 17 }, 0.1f, true));
             animationManager.Add(AnimState.WalkRight,
-                new AnimationComponent(sheet, new int[] { 18, 19, 20, 21, 22, 23 }, 0.1f));
+                new AnimationComponent(sheet, new int[] { 18, 19, 20, 21, 22, 23 }, 0.1f, true));
+
+            animationManager.Add(AnimState.AttackDown,
+                new AnimationComponent(attackSheet, new int[] { 2, 3, 4, 5 }, 0.3f, false));
+            animationManager.Add(AnimState.AttackUp,
+                new AnimationComponent(attackSheet, new int[] { 10, 11, 12, 13 }, 0.1f, false));
+            animationManager.Add(AnimState.AttackLeft,
+                new AnimationComponent(attackSheet, new int[] { 18, 19, 20, 21 }, 0.3f, false));
+            animationManager.Add(AnimState.AttackRight,
+                new AnimationComponent(attackSheet, new int[] { 26, 27, 28, 29 }, 0.3f, false));
             animationManager.currentAnim = animationManager.animations[AnimState.WalkDown];
 
             directionComponent = new DirectionComponent();
@@ -67,11 +76,28 @@ namespace GameProject.Entities
             patrol = new PatrolComponent(tilemap, chaseComponent);
             attackComponent = new AttackComponent(4.0f);//сделать константой
 
+            OnAttack += () => { animationManager.Play(AnimState.AttackRight); };
             OnCooldown += () => { chaseComponent.ChangeMovementSpeed(50.0f); };//сделать константой
-            directionComponent.OnUp += () => animationManager.Play(AnimState.WalkUp);
-            directionComponent.OnDown += () => animationManager.Play(AnimState.WalkDown);
-            directionComponent.OnRight += () => animationManager.Play(AnimState.WalkRight);
-            directionComponent.OnLeft += () => animationManager.Play(AnimState.WalkLeft);
+            directionComponent.OnUp += () => 
+            {
+                if (animationManager.currentAnim.isFinished || animationManager.currentAnim.isLooping)
+                    animationManager.Play(AnimState.WalkUp); 
+            };
+            directionComponent.OnDown += () => 
+            {
+                if (animationManager.currentAnim.isFinished || animationManager.currentAnim.isLooping)
+                    animationManager.Play(AnimState.WalkDown); 
+            };
+            directionComponent.OnRight += () => 
+            {
+                if (animationManager.currentAnim.isFinished || animationManager.currentAnim.isLooping)
+                    animationManager.Play(AnimState.WalkRight); 
+            };
+            directionComponent.OnLeft += () => 
+            {
+                if (animationManager.currentAnim.isFinished || animationManager.currentAnim.isLooping)
+                    animationManager.Play(AnimState.WalkLeft); 
+            };
         }
 
         public void Update(GameTime gameTime)

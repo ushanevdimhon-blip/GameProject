@@ -59,15 +59,15 @@ namespace GameProject.Entities
             animationManager = new AnimationManager();
             //вынести в animationManager? типа init
             animationManager.Add(AnimState.WalkDown, 
-                new AnimationComponent(sheet, new int[] { 16, 17, 18, 19, 20, 21, 22, 23}, 0.1f));
+                new AnimationComponent(sheet, new int[] { 16, 17, 18, 19, 20, 21, 22, 23}, 0.1f, true));
             animationManager.Add(AnimState.WalkUp,
-                new AnimationComponent(sheet, new int[] { 24, 25, 26, 27, 28, 29, 30, 31 }, 0.1f));
+                new AnimationComponent(sheet, new int[] { 24, 25, 26, 27, 28, 29, 30, 31 }, 0.1f, true));
             animationManager.Add(AnimState.WalkLeft,
-                new AnimationComponent(sheet, new int[] { 8, 9, 10, 11, 12, 13, 14, 15 }, 0.1f));
+                new AnimationComponent(sheet, new int[] { 8, 9, 10, 11, 12, 13, 14, 15 }, 0.1f, true));
             animationManager.Add(AnimState.WalkRight,
-                new AnimationComponent(sheet, new int[] { 0, 1, 2, 3, 4, 5, 6, 7 }, 0.1f));
+                new AnimationComponent(sheet, new int[] { 0, 1, 2, 3, 4, 5, 6, 7 }, 0.1f, true));
             animationManager.Add(AnimState.Idle,
-                new AnimationComponent(sheet, new int[] { 32, 33, 34, 35 }, 0.1f));
+                new AnimationComponent(sheet, new int[] { 32, 33, 34, 35 }, 0.1f, true));
             animationManager.currentAnim = animationManager.animations[AnimState.Idle];
 
             positionComponent = new PositionComponent(x, y);

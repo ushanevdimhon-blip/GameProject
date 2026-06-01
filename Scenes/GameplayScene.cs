@@ -18,6 +18,7 @@ namespace GameProject.Scenes
         SpriteFont arialFont;
         SpriteSheet playerSpriteSheet;
         SpriteSheet enemySpriteSheet;
+        SpriteSheet enemyAttackSpriteSheet;
         Player player;
         Enemy enemy;
         Texture2D playerTexture;
@@ -61,6 +62,7 @@ namespace GameProject.Scenes
 
             playerSpriteSheet = new SpriteSheet(Content.Load<Texture2D>("Images/npc01_spritesheet"), 30, 48);
             enemySpriteSheet = new SpriteSheet(Content.Load<Texture2D>("Images/orc1_walk_full"), 64, 64);
+            enemyAttackSpriteSheet = new SpriteSheet(Content.Load<Texture2D>("Images/orc1_attack_full"), 64, 64);
 
             playerTexture = Content.Load<Texture2D>("Images/5053745_0");
             enemyTexture = Content.Load<Texture2D>("Images/vecteezy_angry-face-emoji-png-file_11997334");
@@ -127,7 +129,7 @@ namespace GameProject.Scenes
             };
             player.OnDeath += () => OnGameOver.Invoke();
 
-            enemy = new Enemy(enemySpriteSheet, enemySpriteSheet.GetFrameRect(0), 3.0f, tilemap);
+            enemy = new Enemy(enemySpriteSheet, enemyAttackSpriteSheet, enemySpriteSheet.GetFrameRect(0), 3.0f, tilemap);
             enemy.OnAttack += () => player.TakeDamage(40);          
 
             camera = new Camera(_graphicsDevice.PresentationParameters.BackBufferWidth,

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace GameProject.Animation
 {
-    public enum AnimState { Idle, WalkRight, WalkLeft, WalkUp, WalkDown }
+    public enum AnimState { Idle, WalkRight, WalkLeft, WalkUp, WalkDown, AttackRight, AttackLeft, AttackUp, AttackDown }
     public class AnimationManager
     {
         public Dictionary<AnimState, AnimationComponent> animations = new();

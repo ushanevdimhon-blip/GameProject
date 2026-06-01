@@ -33,6 +33,8 @@ namespace GameProject.Animation
 
         public void Update(float deltaTime)
         {
+            if (isFinished)
+                return;
 
             timer += deltaTime;
             if (timer >= frameDuration)

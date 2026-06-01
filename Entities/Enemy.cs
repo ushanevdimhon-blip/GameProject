@@ -57,15 +57,10 @@ namespace GameProject.Entities
                 new AnimationComponent(sheet, new int[] { 12, 13, 14, 15, 16, 17 }, 0.1f, true));
             animationManager.Add(AnimState.WalkRight,
                 new AnimationComponent(sheet, new int[] { 18, 19, 20, 21, 22, 23 }, 0.1f, true));
-
-            animationManager.Add(AnimState.AttackDown,
-                new AnimationComponent(attackSheet, new int[] { 2, 3, 4, 5 }, 0.3f, false));
             animationManager.Add(AnimState.AttackUp,
-                new AnimationComponent(attackSheet, new int[] { 10, 11, 12, 13 }, 0.1f, false));
-            animationManager.Add(AnimState.AttackLeft,
-                new AnimationComponent(attackSheet, new int[] { 18, 19, 20, 21 }, 0.3f, false));
-            animationManager.Add(AnimState.AttackRight,
-                new AnimationComponent(attackSheet, new int[] { 26, 27, 28, 29 }, 0.3f, false));
+                new AnimationComponent(attackSheet, new int[] { 10, 11, 12, 13 }, 0.1f, true));
+            animationManager.Add(AnimState.AttackDown,
+                new AnimationComponent(attackSheet, new int[] { 2, 3, 4, 5 }, 0.3f, true));
             animationManager.currentAnim = animationManager.animations[AnimState.WalkDown];
 
             directionComponent = new DirectionComponent();
@@ -76,12 +71,13 @@ namespace GameProject.Entities
             patrol = new PatrolComponent(tilemap, chaseComponent);
             attackComponent = new AttackComponent(4.0f);//сделать константой
 
-            OnAttack += () => { animationManager.Play(AnimState.AttackRight); };
             OnCooldown += () => { chaseComponent.ChangeMovementSpeed(50.0f); };//сделать константой
             directionComponent.OnUp += () => 
             {
-                if (animationManager.currentAnim.isFinished || animationManager.currentAnim.isLooping)
-                    animationManager.Play(AnimState.WalkUp); 
+                if ((animationManager.currentAnim.isFinished || animationManager.currentAnim.isLooping) && !attackComponent.IsAttacking)
+                    animationManager.Play(AnimState.WalkUp);
+                else if (attackComponent.IsAttacking)
+                    animationManager.Play(AnimState.AttackDown);
             };
             directionComponent.OnDown += () => 
             {

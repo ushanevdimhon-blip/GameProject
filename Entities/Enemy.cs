@@ -61,7 +61,7 @@ namespace GameProject.Entities
 
             directionComponent = new DirectionComponent();
             render = new RenderComponent(model, scale);
-            positionComponent = new PositionComponent(900, 400);
+            Spawn(tilemap);
             collision = new CollisionComponent(positionComponent, width, height, 300);
             chaseComponent = new ChaseComponent(tilemap, 0.1f, 180.0f);//сделать константой
             patrol = new PatrolComponent(tilemap, chaseComponent);
@@ -99,6 +99,13 @@ namespace GameProject.Entities
             collision.UpdateCircleCollision();
             directionComponent.Update(chaseComponent.CurrentDirection);
             animationManager.Update((float)gameTime.ElapsedGameTime.TotalSeconds);
+        }
+
+        public void Spawn(Tilemap tilemap)
+        {
+            var tileInd = tilemap.GetRandomFloorTileIndex();
+            var tile = tilemap.tiles[tileInd.Y, tileInd.X];
+            positionComponent = new PositionComponent(tile.position.X, tile.position.Y);
         }
 
         public void Chase(PositionComponent playerPosition, GameTime gameTime)

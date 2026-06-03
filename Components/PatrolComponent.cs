@@ -40,7 +40,6 @@ namespace GameProject.Components
                     counter = 0;
                 }
             }
-            Debug.WriteLine($"counter: {counter} at position ({target.X}, {target.Y})");
         }
     }
 }

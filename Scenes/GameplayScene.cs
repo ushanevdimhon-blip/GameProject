@@ -76,9 +76,9 @@ namespace GameProject.Scenes
 
             tilemap = new Tilemap(110, 110, wallTexture, floorTexture, doorTexture);
             tilemap.Create(tilemap.FromFile("map.txt"));
-            tilemap.SpaunItem(TileType.Key, keyTexture, keysToCollect);
-            tilemap.SpaunItem(TileType.Medicine, medTexture, meds);
-            tilemap.SpaunItem(TileType.Boost, boostTexture, boosts);
+            tilemap.SpawnItem(TileType.Key, keyTexture, keysToCollect);
+            tilemap.SpawnItem(TileType.Medicine, medTexture, meds);
+            tilemap.SpawnItem(TileType.Boost, boostTexture, boosts);
 
             worldWidth = tilemap.tiles.GetLength(1) * tilemap.TileWidth;
             worldHeight = tilemap.tiles.GetLength(0) * tilemap.TileHeight;
@@ -88,7 +88,7 @@ namespace GameProject.Scenes
             uiView = new UIView(_graphicsDevice);
             uiPresenter = new UIPresenter(uiModel, uiView);
 
-            player = new Player(playerSpriteSheet, playerSpriteSheet.GetFrameRect(0), 900, 700, 2.0f, keysToCollect);
+            player = new Player(playerSpriteSheet, playerSpriteSheet.GetFrameRect(0), 2.0f, keysToCollect, tilemap);
             player.collision.TileCollisionDetected += (tile) =>
             {
                 if (tile.Type == TileType.Wall || tile.Type == TileType.ClosedDoor)
@@ -134,6 +134,10 @@ namespace GameProject.Scenes
 
             camera = new Camera(_graphicsDevice.PresentationParameters.BackBufferWidth,
                 _graphicsDevice.PresentationParameters.BackBufferHeight);
+
+            camera.Follow(player.positionComponent);
+            camera.Clamp(worldWidth, worldHeight);
+            camera.Update();
         }
 
         public override void Update(GameTime gameTime)

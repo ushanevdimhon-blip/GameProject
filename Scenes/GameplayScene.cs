@@ -38,7 +38,7 @@ namespace GameProject.Scenes
         float worldWidth;
         float worldHeight;
         List<(int X, int Y)> patrolTargets;
-        int keysToCollect = 5;
+        int keysToCollect = 2;
         int meds = 5;
         int boosts = 5;
         float delay = 3.0f;
@@ -70,7 +70,7 @@ namespace GameProject.Scenes
             floorTexture = Content.Load<Texture2D>("Images/floor_old_3");
             keyTexture = Content.Load<Texture2D>("Images/Key_old");
             key2Texture = Content.Load<Texture2D>("Images/Key2_old");
-            doorTexture = Content.Load<Texture2D>("Images/door_old");
+            doorTexture = Content.Load<Texture2D>("Images/door_old_2");
             medTexture = Content.Load<Texture2D>("Images/med_old");
             boostTexture = Content.Load<Texture2D>("Images/boost_old_2");
 
@@ -123,8 +123,13 @@ namespace GameProject.Scenes
             };
             player.OnAllKeysCollected += () =>
             {
-                var index = tilemap.GetDoorIndex();
-                tilemap.Update(index, floorTexture, TileType.OpenDoor);
+                var indexes = tilemap.GetDoorIndexes();
+                patrolTargets.Clear();
+                foreach (var index in indexes)
+                {
+                    tilemap.Update(index, floorTexture, TileType.OpenDoor);
+                    patrolTargets.Add(index);
+                }
                 uiModel.allButtonsPressed = true;
             };
             player.OnDeath += () => OnGameOver.Invoke();
@@ -171,7 +176,7 @@ namespace GameProject.Scenes
                 }
                 else
                 {
-                    enemy.Patrol(patrolTargets, gameTime);
+                    enemy.Patrol(patrolTargets, tilemap, gameTime);
                     isDetected = false;
                     delay = 3.0f;
                 }

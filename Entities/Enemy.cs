@@ -62,7 +62,7 @@ namespace GameProject.Entities
             directionComponent = new DirectionComponent();
             render = new RenderComponent(model, scale);
             Spawn(tilemap);
-            collision = new CollisionComponent(positionComponent, width, height, 300);
+            collision = new CollisionComponent(positionComponent, width, height, 1000);
             chaseComponent = new ChaseComponent(tilemap, 0.1f, 180.0f);//сделать константой
             patrol = new PatrolComponent(tilemap, chaseComponent);
             attackComponent = new AttackComponent(4.0f);//сделать константой
@@ -113,7 +113,7 @@ namespace GameProject.Entities
             chaseComponent.Chase(positionComponent, playerPosition, gameTime);
         }
 
-        public void Patrol(List<(int X, int Y)> targetsPositions, GameTime gameTime)
+        public void Patrol(List<(int X, int Y)> targetsPositions, Tilemap tilemap, GameTime gameTime)
         {
             patrol.Patrol(positionComponent, targetsPositions, gameTime);
         }

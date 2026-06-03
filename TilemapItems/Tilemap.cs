@@ -129,19 +129,20 @@ namespace GameProject.TilemapItems
             return keysIndexes;
         }
 
-        public (int X, int Y) GetDoorIndex()
+        public List<(int X, int Y)> GetDoorIndexes()
         {
+            var doorIndexes = new List<(int X, int Y)>();
             for (int i = 0; i < tiles.GetLength(0); i++)
             {
                 for (int j = 0; j < tiles.GetLength(1); j++)
                 {
                     if (tiles[i, j].Type == TileType.ClosedDoor)
                     {
-                        return (j, i);
+                        doorIndexes.Add((j, i));
                     }
                 }
             }
-            return (-1, -1);
+            return doorIndexes;
         }
 
         public (int X, int Y) GetRandomFloorTileIndex()

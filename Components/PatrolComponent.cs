@@ -24,6 +24,9 @@ namespace GameProject.Components
 
         public void Patrol(PositionComponent currentPosition, List<(int X, int Y)> targetsPositions, GameTime gameTime)
         {  
+            if (targetsPositions.Count <= counter)
+                counter = 0;
+            
             var target = targetsPositions[counter];
             float posX = tilemap.tiles[target.Y, target.X].position.X;
             float posY = tilemap.tiles[target.Y, target.X].position.Y;

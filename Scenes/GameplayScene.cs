@@ -129,7 +129,7 @@ namespace GameProject.Scenes
             };
             player.OnDeath += () => OnGameOver.Invoke();
 
-            enemy = new Enemy(enemySpriteSheet, enemyAttackSpriteSheet, enemySpriteSheet.GetFrameRect(0), 3.0f, tilemap);
+            enemy = new Enemy(enemySpriteSheet, enemySpriteSheet.GetFrameRect(0), 3.0f, tilemap);
             enemy.OnAttack += () => player.TakeDamage(40);          
 
             camera = new Camera(_graphicsDevice.PresentationParameters.BackBufferWidth,

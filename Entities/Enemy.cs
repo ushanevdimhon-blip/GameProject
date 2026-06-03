@@ -40,7 +40,7 @@ namespace GameProject.Entities
         /// </summary>
         public float Height { get { return height; } private set { height = value; } }
 
-        public Enemy(SpriteSheet sheet, SpriteSheet attackSheet, Rectangle rectangle, float scale, Tilemap tilemap)
+        public Enemy(SpriteSheet sheet, Rectangle rectangle, float scale, Tilemap tilemap)
         {
             this.model = sheet.texture;
             this.rectangle = rectangle;
@@ -57,10 +57,6 @@ namespace GameProject.Entities
                 new AnimationComponent(sheet, new int[] { 12, 13, 14, 15, 16, 17 }, 0.1f, true));
             animationManager.Add(AnimState.WalkRight,
                 new AnimationComponent(sheet, new int[] { 18, 19, 20, 21, 22, 23 }, 0.1f, true));
-            animationManager.Add(AnimState.AttackUp,
-                new AnimationComponent(attackSheet, new int[] { 10, 11, 12, 13 }, 0.1f, true));
-            animationManager.Add(AnimState.AttackDown,
-                new AnimationComponent(attackSheet, new int[] { 2, 3, 4, 5 }, 0.3f, true));
             animationManager.currentAnim = animationManager.animations[AnimState.WalkDown];
 
             directionComponent = new DirectionComponent();
@@ -74,10 +70,8 @@ namespace GameProject.Entities
             OnCooldown += () => { chaseComponent.ChangeMovementSpeed(50.0f); };//сделать константой
             directionComponent.OnUp += () => 
             {
-                if ((animationManager.currentAnim.isFinished || animationManager.currentAnim.isLooping) && !attackComponent.IsAttacking)
+                if (animationManager.currentAnim.isFinished || animationManager.currentAnim.isLooping)
                     animationManager.Play(AnimState.WalkUp);
-                else if (attackComponent.IsAttacking)
-                    animationManager.Play(AnimState.AttackDown);
             };
             directionComponent.OnDown += () => 
             {

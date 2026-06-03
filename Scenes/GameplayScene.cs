@@ -1,4 +1,5 @@
-﻿using GameProject.Components;
+﻿using GameProject.Animation;
+using GameProject.Components;
 using GameProject.Entities;
 using GameProject.TilemapItems;
 using GameProject.UI;
@@ -15,6 +16,9 @@ namespace GameProject.Scenes
     {
         SpriteBatch _spriteBatch;
         SpriteFont arialFont;
+        SpriteSheet playerSpriteSheet;
+        SpriteSheet enemySpriteSheet;
+        SpriteSheet enemyAttackSpriteSheet;
         Player player;
         Enemy enemy;
         Texture2D playerTexture;
@@ -56,6 +60,10 @@ namespace GameProject.Scenes
 
             arialFont = Content.Load<SpriteFont>("Fonts/Arial");
 
+            playerSpriteSheet = new SpriteSheet(Content.Load<Texture2D>("Images/npc01_spritesheet"), 30, 48);
+            enemySpriteSheet = new SpriteSheet(Content.Load<Texture2D>("Images/orc1_walk_full"), 64, 64);
+            enemyAttackSpriteSheet = new SpriteSheet(Content.Load<Texture2D>("Images/orc1_attack_full"), 64, 64);
+
             playerTexture = Content.Load<Texture2D>("Images/5053745_0");
             enemyTexture = Content.Load<Texture2D>("Images/vecteezy_angry-face-emoji-png-file_11997334");
             wallTexture = Content.Load<Texture2D>("Images/wall_old");
@@ -66,7 +74,7 @@ namespace GameProject.Scenes
             medTexture = Content.Load<Texture2D>("Images/med_old");
             boostTexture = Content.Load<Texture2D>("Images/boost_old_2");
 
-            tilemap = new Tilemap(90, 90, wallTexture, floorTexture, doorTexture);
+            tilemap = new Tilemap(110, 110, wallTexture, floorTexture, doorTexture);
             tilemap.Create(tilemap.FromFile("map.txt"));
             tilemap.SpaunItem(TileType.Key, keyTexture, keysToCollect);
             tilemap.SpaunItem(TileType.Medicine, medTexture, meds);
@@ -80,7 +88,7 @@ namespace GameProject.Scenes
             uiView = new UIView(_graphicsDevice);
             uiPresenter = new UIPresenter(uiModel, uiView);
 
-            player = new Player(playerTexture, 800, 700, 0.15f, keysToCollect);
+            player = new Player(playerSpriteSheet, playerSpriteSheet.GetFrameRect(0), 900, 700, 2.0f, keysToCollect);
             player.collision.TileCollisionDetected += (tile) =>
             {
                 if (tile.Type == TileType.Wall || tile.Type == TileType.ClosedDoor)
@@ -121,7 +129,7 @@ namespace GameProject.Scenes
             };
             player.OnDeath += () => OnGameOver.Invoke();
 
-            enemy = new Enemy(enemyTexture, 0.03f, tilemap);
+            enemy = new Enemy(enemySpriteSheet, enemySpriteSheet.GetFrameRect(0), 3.0f, tilemap);
             enemy.OnAttack += () => player.TakeDamage(40);          
 
             camera = new Camera(_graphicsDevice.PresentationParameters.BackBufferWidth,
@@ -183,11 +191,19 @@ namespace GameProject.Scenes
             tilemap.Draw(_spriteBatch, c1, c2, r1, r2);
 
             player.Draw(_spriteBatch);
-            //player.collision.DrawRectangle(_spriteBatch, Color.Green);
+            player.collision.DrawRectangle(_spriteBatch, Color.Green);
 
             enemy.Draw(_spriteBatch);
-            //enemy.collision.DrawRectangle(_spriteBatch, Color.Green);
-            //enemy.collision.DrawCircle(_spriteBatch, Color.Green);
+            enemy.collision.DrawRectangle(_spriteBatch, Color.Green);
+            enemy.collision.DrawCircle(_spriteBatch, Color.Green);
+
+            //for (int i = 0; i < tilemap.tiles.GetLength(0); i++)
+            //{
+            //    for (int j = 0; j < tilemap.tiles.GetLength(1); j++)
+            //    {
+            //        tilemap.tiles[i, j].collision.DrawRectangle(_spriteBatch, Color.Red);
+            //    }
+            //}
 
             _spriteBatch.End();
 

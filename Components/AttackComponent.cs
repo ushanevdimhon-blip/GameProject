@@ -10,6 +10,7 @@ namespace GameProject.Components
     public class AttackComponent
     {
         public float cooldown { get; private set; }
+        public bool IsAttacking { get; private set; }
 
         public AttackComponent(float cooldown) 
         { 
@@ -21,11 +22,13 @@ namespace GameProject.Components
             if (cooldown >= 4.0f)//сделать константой
             {
                 OnAttack?.Invoke();
+                IsAttacking = true;
                 cooldown = 0.0f;
             }
             else
             {
                 OnCooldown?.Invoke();
+                IsAttacking = false;
             }
         }
 

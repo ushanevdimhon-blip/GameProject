@@ -1,9 +1,11 @@
-﻿using GameProject.Components;
+﻿using GameProject.Animation;
+using GameProject.Components;
 using GameProject.TilemapItems;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Numerics;
 using System.Text;
@@ -14,10 +16,13 @@ namespace GameProject.Entities
     public class Enemy
     {
         Texture2D model;
+        Rectangle rectangle;
+        AnimationManager animationManager;
         RenderComponent render;       
         PatrolComponent patrol;        
         ChaseComponent chaseComponent;
         AttackComponent attackComponent;
+        DirectionComponent directionComponent;
         public PositionComponent positionComponent;
         public CollisionComponent collision;
 
@@ -35,19 +40,54 @@ namespace GameProject.Entities
         /// </summary>
         public float Height { get { return height; } private set { height = value; } }
 
-        public Enemy(Texture2D model, float scale, Tilemap tilemap)
+        public Enemy(SpriteSheet sheet, Rectangle rectangle, float scale, Tilemap tilemap)
         {
-            this.model = model;
-            width = model.Width * scale;
-            height = model.Height * scale;
+            this.model = sheet.texture;
+            this.rectangle = rectangle;
+            width = rectangle.Width * scale;
+            height = rectangle.Height * scale;
+
+            animationManager = new AnimationManager();
+            //вынести в animationManager? типа init
+            animationManager.Add(AnimState.WalkDown,
+                new AnimationComponent(sheet, new int[] { 0, 1, 2, 3, 4, 5 }, 0.1f, true));
+            animationManager.Add(AnimState.WalkUp,
+                new AnimationComponent(sheet, new int[] { 6, 7, 8, 9, 10, 11 }, 0.1f, true));
+            animationManager.Add(AnimState.WalkLeft,
+                new AnimationComponent(sheet, new int[] { 12, 13, 14, 15, 16, 17 }, 0.1f, true));
+            animationManager.Add(AnimState.WalkRight,
+                new AnimationComponent(sheet, new int[] { 18, 19, 20, 21, 22, 23 }, 0.1f, true));
+            animationManager.currentAnim = animationManager.animations[AnimState.WalkDown];
+
+            directionComponent = new DirectionComponent();
             render = new RenderComponent(model, scale);
-            positionComponent = new PositionComponent(800, 400);
-            patrol = new PatrolComponent(tilemap);
-            collision = new CollisionComponent(positionComponent, width*1.5f, height*1.5f, 300);
+            positionComponent = new PositionComponent(900, 400);
+            collision = new CollisionComponent(positionComponent, width, height, 300);
             chaseComponent = new ChaseComponent(tilemap, 0.1f, 180.0f);//сделать константой
+            patrol = new PatrolComponent(tilemap, chaseComponent);
             attackComponent = new AttackComponent(4.0f);//сделать константой
 
             OnCooldown += () => { chaseComponent.ChangeMovementSpeed(50.0f); };//сделать константой
+            directionComponent.OnUp += () => 
+            {
+                if (animationManager.currentAnim.isFinished || animationManager.currentAnim.isLooping)
+                    animationManager.Play(AnimState.WalkUp);
+            };
+            directionComponent.OnDown += () => 
+            {
+                if (animationManager.currentAnim.isFinished || animationManager.currentAnim.isLooping)
+                    animationManager.Play(AnimState.WalkDown); 
+            };
+            directionComponent.OnRight += () => 
+            {
+                if (animationManager.currentAnim.isFinished || animationManager.currentAnim.isLooping)
+                    animationManager.Play(AnimState.WalkRight); 
+            };
+            directionComponent.OnLeft += () => 
+            {
+                if (animationManager.currentAnim.isFinished || animationManager.currentAnim.isLooping)
+                    animationManager.Play(AnimState.WalkLeft); 
+            };
         }
 
         public void Update(GameTime gameTime)
@@ -57,6 +97,8 @@ namespace GameProject.Entities
                 chaseComponent.ChangeMovementSpeed(180.0f);//сделать константой
             collision.UpdateRectangleCollision();
             collision.UpdateCircleCollision();
+            directionComponent.Update(chaseComponent.CurrentDirection);
+            animationManager.Update((float)gameTime.ElapsedGameTime.TotalSeconds);
         }
 
         public void Chase(PositionComponent playerPosition, GameTime gameTime)
@@ -76,7 +118,7 @@ namespace GameProject.Entities
 
         public void Draw(SpriteBatch spriteBatch)
         {
-            render.Draw(spriteBatch, positionComponent);
+            render.Draw(spriteBatch, positionComponent, animationManager.GetCurrentFrameRect());
         }
     }
 }

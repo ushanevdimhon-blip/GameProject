@@ -23,6 +23,7 @@ namespace GameProject.Components
         private float MovementSpeed;
         private float Interval;
         private float time = 0.0f;
+        public Vector2 CurrentDirection { get; private set; } = Vector2.Zero;
 
         public ChaseComponent(Tilemap tilemap, float interval, float speed)
         {
@@ -68,6 +69,7 @@ namespace GameProject.Components
                 if (distance > distanceToMove)
                 {
                     direction.Normalize();
+                    CurrentDirection = direction;
                     currentPos += direction * distanceToMove;
                     break;
                 }

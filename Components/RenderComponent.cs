@@ -32,6 +32,14 @@ namespace GameProject.Components
                 0.0f, origin, scale, SpriteEffects.None, 0.0f);
         }
 
+        public void Draw(SpriteBatch spriteBatch, PositionComponent positionComponent, Rectangle rectangle)
+        {
+            Vector2 origin = new Vector2(rectangle.Width / 2f, rectangle.Height / 2f);
+
+            spriteBatch.Draw(model, new Vector2(positionComponent.X, positionComponent.Y), rectangle, Color.White,
+                0.0f, origin, scale, SpriteEffects.None, 0.0f);
+        }
+
         public void DrawTile(SpriteBatch spriteBatch, PositionComponent positionComponent, int tileWidth, int tileHeight)
         {
             Vector2 origin = new Vector2(model.Width / 2f, model.Height / 2f);

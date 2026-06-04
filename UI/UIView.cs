@@ -62,9 +62,9 @@ namespace GameProject.UI
                 Color.White, 0.0f, Vector2.Zero, 0.5f, SpriteEffects.None, 1.0f);
             else if (model.elapsedTimeSinceLastButtonPress <= 3.0f)
                 spriteBatch.DrawString(model.arialFont,
-                $"Door Is Open",
-                new Vector2(graphicsDevice.PresentationParameters.BackBufferWidth / 2 - model.arialFont.MeasureString($"Door Is Open").X / 2 - 40,
-                            graphicsDevice.PresentationParameters.BackBufferHeight / 2 - model.arialFont.MeasureString($"Door Is Open").Y / 2),
+                $"Doors Are Open",
+                new Vector2(graphicsDevice.PresentationParameters.BackBufferWidth / 2 - model.arialFont.MeasureString($"Doors Are Open").X / 2 - 40,
+                            graphicsDevice.PresentationParameters.BackBufferHeight / 2 - model.arialFont.MeasureString($"Door Are Open").Y / 2),
                             Color.White, 0.0f, Vector2.Zero, 1.5f, SpriteEffects.None, 1.0f);
         }
 

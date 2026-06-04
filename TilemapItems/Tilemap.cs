@@ -25,6 +25,7 @@ namespace GameProject.TilemapItems
         Texture2D wallTexture;
         Texture2D floorTexture;
         Texture2D doorTexture;
+        static readonly Random rand = new Random();
 
         public int TileWidth { get; private set; }
         public int TileHeight { get; private set; }
@@ -90,9 +91,8 @@ namespace GameProject.TilemapItems
             return tileData;
         }
 
-        public void SpaunItem(TileType tileType, Texture2D itemTexture, int itemCount)
+        public void SpawnItem(TileType tileType, Texture2D itemTexture, int itemCount)
         {
-            var rand = new Random();
             while (itemCount > 0)
             {
                 int row = rand.Next(tiles.GetLength(0));
@@ -129,24 +129,24 @@ namespace GameProject.TilemapItems
             return keysIndexes;
         }
 
-        public (int X, int Y) GetDoorIndex()
+        public List<(int X, int Y)> GetDoorIndexes()
         {
+            var doorIndexes = new List<(int X, int Y)>();
             for (int i = 0; i < tiles.GetLength(0); i++)
             {
                 for (int j = 0; j < tiles.GetLength(1); j++)
                 {
                     if (tiles[i, j].Type == TileType.ClosedDoor)
                     {
-                        return (j, i);
+                        doorIndexes.Add((j, i));
                     }
                 }
             }
-            return (-1, -1);
+            return doorIndexes;
         }
 
         public (int X, int Y) GetRandomFloorTileIndex()
         {
-            var rand = new Random();
             int row = rand.Next(2, tiles.GetLength(0)-2);
             int col = rand.Next(2, tiles.GetLength(1)-2);
 

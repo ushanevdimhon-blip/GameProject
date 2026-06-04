@@ -1,5 +1,6 @@
 ﻿using GameProject.Animation;
 using GameProject.Components;
+using GameProject.TilemapItems;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -48,7 +49,7 @@ namespace GameProject.Entities
         public float Stamina { get { return input.speedComponent.stamina; } }
         public float MaxStamina { get { return input.speedComponent.MaxStamina; } }
 
-        public Player(SpriteSheet sheet, Rectangle rectangle, float x, float y, float scale, int keysToCollect)
+        public Player(SpriteSheet sheet, Rectangle rectangle, float scale, int keysToCollect, Tilemap tilemap)
         {
             this.model = sheet.texture;
             this.rectangle = rectangle;
@@ -70,9 +71,9 @@ namespace GameProject.Entities
                 new AnimationComponent(sheet, new int[] { 32, 33, 34, 35 }, 0.1f, true));
             animationManager.currentAnim = animationManager.animations[AnimState.Idle];
 
-            positionComponent = new PositionComponent(x, y);
             speedComponent = new SpeedComponent(140.0f, 100.0f);//сделать константой
             render = new RenderComponent(model, scale);
+            Spawn(tilemap);
             input = new InputComponent(speedComponent);
             collision = new CollisionComponent(positionComponent, width, height);
             healthComponent = new HealthComponent(100);
@@ -101,6 +102,14 @@ namespace GameProject.Entities
         public void Draw(SpriteBatch spriteBatch)
         {
             render.Draw(spriteBatch, positionComponent, animationManager.GetCurrentFrameRect());
+        }
+
+        public void Spawn(Tilemap tilemap)
+        {
+            var tileInd = tilemap.GetRandomFloorTileIndex();
+            var tile = tilemap.tiles[tileInd.Y, tileInd.X];
+            positionComponent = new PositionComponent(tile.position.X, tile.position.Y);
+            Debug.WriteLine($"Player spawned at: Position({tile.position.X},{tile.position.Y}), TileIndex({tileInd.Y},{tileInd.X})");
         }
 
         public void TakeDamage(int damage)

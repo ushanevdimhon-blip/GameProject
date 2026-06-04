@@ -14,10 +14,12 @@ namespace GameProject.Components
     {
         ChaseComponent chaseComponent;
         int counter = 0;
+        float patrolVelocity;
         Tilemap tilemap;
 
-        public PatrolComponent(Tilemap tilemap, ChaseComponent chaseComponent)
+        public PatrolComponent(Tilemap tilemap, ChaseComponent chaseComponent, float patrolVelocity)
         {
+            this.patrolVelocity = patrolVelocity;
             this.tilemap = tilemap;
             this.chaseComponent = chaseComponent;
         }
@@ -30,7 +32,7 @@ namespace GameProject.Components
             var target = targetsPositions[counter];
             float posX = tilemap.tiles[target.Y, target.X].position.X;
             float posY = tilemap.tiles[target.Y, target.X].position.Y;
-            chaseComponent.ChangeMovementSpeed(120.0f);
+            chaseComponent.ChangeMovementSpeed(patrolVelocity);
             chaseComponent.Chase(currentPosition, new PositionComponent(posX, posY), gameTime);
             var next = new Vector2(posX, posY);
             Vector2 direction = next - new Vector2(currentPosition.X, currentPosition.Y);
@@ -43,6 +45,7 @@ namespace GameProject.Components
                     counter = 0;
                 }
             }
+            Debug.WriteLine($"counter: {counter} at position ({target.X}, {target.Y})");
         }
     }
 }

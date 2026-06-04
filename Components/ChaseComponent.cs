@@ -21,14 +21,13 @@ namespace GameProject.Components
         private readonly Tilemap tilemap;
         private List<PositionComponent> currentPath;
         private float MovementSpeed;
-        private float Interval;
+        private float Interval = 0.1f;
         private float time = 0.0f;
         public Vector2 CurrentDirection { get; private set; } = Vector2.Zero;
 
-        public ChaseComponent(Tilemap tilemap, float interval, float speed)
+        public ChaseComponent(Tilemap tilemap, float speed)
         {
             this.tilemap = tilemap;
-            this.Interval = interval;
             this.MovementSpeed = speed;
             this.currentPath = new List<PositionComponent>();
         }

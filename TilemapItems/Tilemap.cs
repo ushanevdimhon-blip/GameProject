@@ -76,7 +76,7 @@ namespace GameProject.TilemapItems
             }
         }
 
-        public string[,] FromFile(string fileName)
+        public static string[,] FromFile(string fileName)
         {
             var lines = System.IO.File.ReadAllLines(fileName);
             var tileData = new string[lines.Length, lines[0].Length];
@@ -113,36 +113,20 @@ namespace GameProject.TilemapItems
             }
         }
 
-        public List<(int X, int Y)> GetKeysIndexes()
+        public List<(int X, int Y)> GetItemIndexes(TileType tileType)
         {
-            var keysIndexes = new List<(int X, int Y)>();
+            var itemIndexes = new List<(int X, int Y)>();
             for (int i = 0; i < tiles.GetLength(0); i++)
             {
                 for (int j = 0; j < tiles.GetLength(1); j++)
                 {
-                    if (tiles[i, j].Type == TileType.Key)
+                    if (tiles[i, j].Type == tileType)
                     {
-                        keysIndexes.Add((j, i));
+                        itemIndexes.Add((j, i));
                     }
                 }
             }
-            return keysIndexes;
-        }
-
-        public List<(int X, int Y)> GetDoorIndexes()
-        {
-            var doorIndexes = new List<(int X, int Y)>();
-            for (int i = 0; i < tiles.GetLength(0); i++)
-            {
-                for (int j = 0; j < tiles.GetLength(1); j++)
-                {
-                    if (tiles[i, j].Type == TileType.ClosedDoor)
-                    {
-                        doorIndexes.Add((j, i));
-                    }
-                }
-            }
-            return doorIndexes;
+            return itemIndexes;
         }
 
         public (int X, int Y) GetRandomFloorTileIndex()

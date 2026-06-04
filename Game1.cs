@@ -61,6 +61,22 @@ namespace GameProject
             base.Draw(gameTime);
         }
 
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                currentScene.Dispose();
+                nextScene?.Dispose();
+                _graphics.Dispose();
+            }
+            base.Dispose(disposing);
+        }
+
+        public void ChangeScene(Scene newScene)
+        {
+            nextScene = newScene;
+        }
+
         private void SubscribeToMenuActions(MenuScene menuScene)
         {
             menuScene.OnPlayGame += () =>
@@ -91,22 +107,6 @@ namespace GameProject
                 ChangeScene(newMenuScene);
                 SubscribeToMenuActions(newMenuScene);
             };
-        }
-
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                currentScene.Dispose();
-                nextScene?.Dispose();
-                _graphics.Dispose();
-            }
-            base.Dispose(disposing);
-        }
-
-        public void ChangeScene(Scene newScene)
-        {
-            nextScene = newScene;
         }
     }
 }

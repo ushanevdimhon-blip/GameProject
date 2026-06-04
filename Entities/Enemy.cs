@@ -16,9 +16,9 @@ namespace GameProject.Entities
     public class Enemy
     {
         Texture2D model;
-        Rectangle rectangle;
-        AnimationManager animationManager;
+        AnimationComponent animationComponent;
         RenderComponent render;       
+        ViewComponent viewComponent;
         PatrolComponent patrol;        
         ChaseComponent chaseComponent;
         AttackComponent attackComponent;
@@ -29,76 +29,44 @@ namespace GameProject.Entities
         public Action OnAttack;
         public Action OnCooldown;
 
-        float width;
-        float height;
-        /// <summary>
-        /// ширина модели умноженная на масштаб
-        /// </summary>
-        public float Width { get { return width; } private set { width = value; } }
-        /// <summary>
-        /// высота модели умноженная на масштаб
-        /// </summary>
-        public float Height { get { return height; } private set { height = value; } }
+        const float BaseVelocity = 200.0f;
+        const float PatrolVelocity = 150.0f;
+        const float CooldownTime = 4.0f;
+        const int SightRadius = 800;
 
         public Enemy(SpriteSheet sheet, Rectangle rectangle, float scale, Tilemap tilemap)
         {
-            this.model = sheet.texture;
-            this.rectangle = rectangle;
-            width = rectangle.Width * scale;
-            height = rectangle.Height * scale;
+            model = sheet.texture;
+            var width = rectangle.Width * scale;
+            var height = rectangle.Height * scale;
 
-            animationManager = new AnimationManager();
-            //вынести в animationManager? типа init
-            animationManager.Add(AnimState.WalkDown,
-                new AnimationComponent(sheet, new int[] { 0, 1, 2, 3, 4, 5 }, 0.1f, true));
-            animationManager.Add(AnimState.WalkUp,
-                new AnimationComponent(sheet, new int[] { 6, 7, 8, 9, 10, 11 }, 0.1f, true));
-            animationManager.Add(AnimState.WalkLeft,
-                new AnimationComponent(sheet, new int[] { 12, 13, 14, 15, 16, 17 }, 0.1f, true));
-            animationManager.Add(AnimState.WalkRight,
-                new AnimationComponent(sheet, new int[] { 18, 19, 20, 21, 22, 23 }, 0.1f, true));
-            animationManager.currentAnim = animationManager.animations[AnimState.WalkDown];
+            SetAnimations(sheet);
+            Spawn(tilemap);
 
             directionComponent = new DirectionComponent();
-            render = new RenderComponent(model, scale);
-            Spawn(tilemap);
-            collision = new CollisionComponent(positionComponent, width, height, 1000);
-            chaseComponent = new ChaseComponent(tilemap, 0.1f, 180.0f);//сделать константой
-            patrol = new PatrolComponent(tilemap, chaseComponent);
-            attackComponent = new AttackComponent(4.0f);//сделать константой
+            viewComponent = new ViewComponent(positionComponent);
+            render = new RenderComponent(model, scale);         
+            collision = new CollisionComponent(positionComponent, width, height, SightRadius);
+            chaseComponent = new ChaseComponent(tilemap, BaseVelocity);
+            patrol = new PatrolComponent(tilemap, chaseComponent, PatrolVelocity);
+            attackComponent = new AttackComponent(CooldownTime);
 
-            OnCooldown += () => { chaseComponent.ChangeMovementSpeed(50.0f); };//сделать константой
-            directionComponent.OnUp += () => 
-            {
-                if (animationManager.currentAnim.isFinished || animationManager.currentAnim.isLooping)
-                    animationManager.Play(AnimState.WalkUp);
-            };
-            directionComponent.OnDown += () => 
-            {
-                if (animationManager.currentAnim.isFinished || animationManager.currentAnim.isLooping)
-                    animationManager.Play(AnimState.WalkDown); 
-            };
-            directionComponent.OnRight += () => 
-            {
-                if (animationManager.currentAnim.isFinished || animationManager.currentAnim.isLooping)
-                    animationManager.Play(AnimState.WalkRight); 
-            };
-            directionComponent.OnLeft += () => 
-            {
-                if (animationManager.currentAnim.isFinished || animationManager.currentAnim.isLooping)
-                    animationManager.Play(AnimState.WalkLeft); 
-            };
+            SubcribeToEvents();
         }
 
         public void Update(GameTime gameTime)
         {
             attackComponent.Update(gameTime);
-            if (attackComponent.cooldown >= 4.0f)//сделать константой
-                chaseComponent.ChangeMovementSpeed(180.0f);//сделать константой
-            collision.UpdateRectangleCollision();
-            collision.UpdateCircleCollision();
+            if (attackComponent.cooldown >= CooldownTime)
+                chaseComponent.ChangeMovementSpeed(BaseVelocity);
+            collision.Update();
             directionComponent.Update(chaseComponent.CurrentDirection);
-            animationManager.Update((float)gameTime.ElapsedGameTime.TotalSeconds);
+            animationComponent.Update(gameTime);
+        }
+
+        public void Draw(SpriteBatch spriteBatch)
+        {
+            render.Draw(spriteBatch, positionComponent, animationComponent.GetCurrentFrameRect());
         }
 
         public void Spawn(Tilemap tilemap)
@@ -123,9 +91,50 @@ namespace GameProject.Entities
             attackComponent.Attack(OnAttack, OnCooldown);
         }
 
-        public void Draw(SpriteBatch spriteBatch)
+        public bool HasLineOfSight(PositionComponent playerPosition, Tilemap map)
         {
-            render.Draw(spriteBatch, positionComponent, animationManager.GetCurrentFrameRect());
+            return viewComponent.HasLineOfSight(playerPosition, map);
+        }
+
+        private void SubcribeToEvents()
+        {
+            OnCooldown += () => { chaseComponent.ChangeMovementSpeed(BaseVelocity / 4); };
+            directionComponent.OnUp += () =>
+            {
+                if (animationComponent.currentAnim.isFinished || animationComponent.currentAnim.isLooping)
+                    animationComponent.Play(AnimState.WalkUp);
+            };
+            directionComponent.OnDown += () =>
+            {
+                if (animationComponent.currentAnim.isFinished || animationComponent.currentAnim.isLooping)
+                    animationComponent.Play(AnimState.WalkDown);
+            };
+            directionComponent.OnRight += () =>
+            {
+                if (animationComponent.currentAnim.isFinished || animationComponent.currentAnim.isLooping)
+                    animationComponent.Play(AnimState.WalkRight);
+            };
+            directionComponent.OnLeft += () =>
+            {
+                if (animationComponent.currentAnim.isFinished || animationComponent.currentAnim.isLooping)
+                    animationComponent.Play(AnimState.WalkLeft);
+            };
+        }
+
+        private void SetAnimations(SpriteSheet sheet)
+        {
+            animationComponent = new AnimationComponent();
+
+            animationComponent.Add(AnimState.WalkDown,
+                new Animation.Animation(sheet, new int[] { 0, 1, 2, 3, 4, 5 }, true));
+            animationComponent.Add(AnimState.WalkUp,
+                new Animation.Animation(sheet, new int[] { 6, 7, 8, 9, 10, 11 }, true));
+            animationComponent.Add(AnimState.WalkLeft,
+                new Animation.Animation(sheet, new int[] { 12, 13, 14, 15, 16, 17 }, true));
+            animationComponent.Add(AnimState.WalkRight,
+                new Animation.Animation(sheet, new int[] { 18, 19, 20, 21, 22, 23 }, true));
+
+            animationComponent.currentAnim = animationComponent.animations[AnimState.WalkDown];
         }
     }
 }

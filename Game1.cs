@@ -12,6 +12,7 @@ namespace GameProject
         GraphicsDeviceManager _graphics;
         Scene currentScene;
         Scene nextScene;
+        GameplayScene pausedGameplayScene;
 
         public Game1()
         {
@@ -44,9 +45,18 @@ namespace GameProject
         {
             if (nextScene != null)
             {
-                currentScene.Dispose();
+                if (currentScene != pausedGameplayScene)
+                {
+                    currentScene.Dispose();
+                }
+                
                 currentScene = nextScene;
-                currentScene.Initialize();
+                
+                if (currentScene != pausedGameplayScene)
+                {
+                    currentScene.Initialize();
+                }
+                
                 nextScene = null;
             }
 
@@ -67,6 +77,7 @@ namespace GameProject
             {
                 currentScene.Dispose();
                 nextScene?.Dispose();
+                pausedGameplayScene?.Dispose();
                 _graphics.Dispose();
             }
             base.Dispose(disposing);
@@ -79,7 +90,7 @@ namespace GameProject
 
         private void SubscribeToMenuActions(MenuScene menuScene)
         {
-            menuScene.OnPlayGame += () =>
+            menuScene.OnPlay += () =>
             {
                 GameplayScene gameplayScene = new GameplayScene(GraphicsDevice, Content);
                 IsMouseVisible = false;
@@ -87,12 +98,12 @@ namespace GameProject
                 SubscribeToGameplayActions(gameplayScene);
             };
 
-            menuScene.OnQuitGame += Exit;
+            menuScene.OnQuit += Exit;
         }
 
         private void SubscribeToGameplayActions(GameplayScene gameplayScene)
         {
-            gameplayScene.OnGameOver += () =>
+            gameplayScene.OnLoss += () =>
             {
                 MenuScene newMenuScene = new MenuScene(GraphicsDevice, Content, Color.IndianRed, "You've lost");
                 IsMouseVisible = true;
@@ -100,13 +111,37 @@ namespace GameProject
                 SubscribeToMenuActions(newMenuScene);
             };
 
-            gameplayScene.OnGameWon += () =>
+            gameplayScene.OnWin += () =>
             {
                 MenuScene newMenuScene = new MenuScene(GraphicsDevice, Content, Color.YellowGreen, "You won!");
                 IsMouseVisible = true;
                 ChangeScene(newMenuScene);
                 SubscribeToMenuActions(newMenuScene);
             };
+
+            gameplayScene.OnPause += () =>
+            {
+                MenuScene pauseMenuScene = new MenuScene(GraphicsDevice, Content, Color.Gray, "Paused", true);
+                IsMouseVisible = true;
+                if (pausedGameplayScene != gameplayScene)
+                {
+                    pausedGameplayScene = gameplayScene;
+                }
+                ChangeScene(pauseMenuScene);
+                SubscribeToPauseMenuActions(pauseMenuScene);
+            };
+        }
+
+        private void SubscribeToPauseMenuActions(MenuScene pauseMenuScene)
+        {
+            pauseMenuScene.OnContinue += () =>
+            {
+                IsMouseVisible = false;
+                ChangeScene(pausedGameplayScene);
+                pausedGameplayScene.IsPaused = false;             
+            };
+
+            pauseMenuScene.OnQuit += Exit;
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using System;
+using System.Data.SqlTypes;
 
 namespace GameProject.Scenes
 {

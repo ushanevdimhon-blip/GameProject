@@ -46,9 +46,11 @@ namespace GameProject.Scenes
         const int boosts = 5;
         float delay = 3.0f;
         bool isDetected = false;
+        public bool IsPaused = false;
 
-        public Action OnGameOver;
-        public Action OnGameWon;
+        public Action OnLoss;
+        public Action OnWin;
+        public Action OnPause;
 
         public GameplayScene(GraphicsDevice graphicsDevice, ContentManager contentManager)
         {
@@ -112,6 +114,17 @@ namespace GameProject.Scenes
 
         public override void Update(GameTime gameTime)
         {
+            if (IsPaused)
+                return;
+
+            var key = Keyboard.GetState();
+
+            if (key.IsKeyDown(Keys.Escape))
+            {
+                IsPaused = true;
+                OnPause?.Invoke();
+            }
+                
             player.Update(gameTime);
             enemy.Update(gameTime);
 
@@ -218,7 +231,7 @@ namespace GameProject.Scenes
                 }
                 if (tile.Type == TileType.OpenDoor)
                 {
-                    OnGameWon.Invoke();
+                    OnWin.Invoke();
                     player.Block();
                 }
             };
@@ -233,7 +246,7 @@ namespace GameProject.Scenes
                 }
                 uiModel.allButtonsPressed = true;
             };
-            player.OnDeath += () => OnGameOver.Invoke();
+            player.OnDeath += () => OnLoss.Invoke();
         }
 
         private void SubscribeToEnemyEvents()

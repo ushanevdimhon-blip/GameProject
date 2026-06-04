@@ -21,17 +21,20 @@ namespace GameProject.Scenes
         string menuTitle;
         int screenWidth;
         int screenHeight;
+        bool isPause;
 
-        public Action OnPlayGame;
-        public Action OnQuitGame;
+        public Action OnPlay;
+        public Action OnQuit;
+        public Action OnContinue;
 
         public MenuScene(GraphicsDevice graphicsDevice, ContentManager contentManager, 
-            Color backgroundColor, string menuTitle)
+            Color backgroundColor, string menuTitle, bool isPause = false)
         {
             _graphicsDevice = graphicsDevice;
             Content = contentManager;
             this.backgroundColor = backgroundColor;
             this.menuTitle = menuTitle;
+            this.isPause = isPause;
         }
 
         public override void Initialize()
@@ -66,11 +69,18 @@ namespace GameProject.Scenes
             {            
                 if (playButtonRect.Contains(mouse.X, mouse.Y))
                 {
-                    OnPlayGame.Invoke();
+                    if (isPause)
+                    {
+                        OnContinue?.Invoke();
+                    }
+                    else
+                    {
+                        OnPlay?.Invoke();
+                    }
                 }
                 if (quitButtonRect.Contains(mouse.X, mouse.Y))
                 {
-                    OnQuitGame.Invoke();
+                    OnQuit.Invoke();
                 }
             }
         }

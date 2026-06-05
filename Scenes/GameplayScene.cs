@@ -45,7 +45,7 @@ namespace GameProject.Scenes
         float worldHeight;
         const int keysToCollect = 2;
         const int meds = 5;
-        const int boosts = 5;
+        const int boosts = 8;
         float delay = 3.0f;
         bool isDetected = false;
         public bool IsPaused = false;

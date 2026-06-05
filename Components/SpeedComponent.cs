@@ -11,17 +11,17 @@ namespace GameProject.Components
     public class SpeedComponent
     {
         public float stamina;
-        public float MaxStamina { get; set; }
         public bool isSprinting;
         public float velocity;
-        public float baseVelocity;
-        public float delay;
+        float maxStamina;
+        float baseVelocity;
+        float delay;
 
         public SpeedComponent(float velocity, float stamina)
         {
             this.baseVelocity = velocity;
             this.velocity = velocity;
-            MaxStamina = stamina;
+            maxStamina = stamina;
             this.stamina = stamina;
         }
 
@@ -45,12 +45,12 @@ namespace GameProject.Components
             {
                 if (isSprinting && stamina > 0)
                 {
-                    stamina -= 30.0f * deltaTime;
+                    stamina -= 20.0f * deltaTime;
                     stamina = Math.Max(0, stamina);
                 }
                 else if (!isSprinting && stamina < 100)
                 {
-                    stamina += 10.0f * deltaTime;
+                    stamina += 20.0f * deltaTime;
                     stamina = Math.Min(100, stamina);
                 }
             }
@@ -63,7 +63,7 @@ namespace GameProject.Components
 
         public void RestoreStamina()
         {
-            stamina = MaxStamina;
+            stamina = maxStamina;
             delay = 0;
         }
     }

@@ -7,66 +7,41 @@ using System.Threading.Tasks;
 
 namespace GameProject.Animation
 {
+    public enum AnimState { Idle, WalkRight, WalkLeft, WalkUp, WalkDown, AttackRight, AttackLeft, AttackUp, AttackDown }
     public class AnimationComponent
     {
-        private SpriteSheet spriteSheet;
-        private int[] frames;
-        private float frameDuration;
-        private int currentIndex;
-        private float timer;
-        public bool isLooping;
-        public bool isFinished;
+        public Dictionary<AnimState, Animation> animations = new();
+        private AnimState? currentState;
+        public Animation currentAnim;
 
-        public float FrameDuration
+        public void Add(AnimState state, Animation animation)
         {
-            get { return frameDuration; }
-            set { frameDuration = value; }
+            animations[state] = animation;
         }
 
-        public AnimationComponent(SpriteSheet spriteSheet, int[] frames, float frameDuration, bool isLooping)
+        public void Play(AnimState state)
         {
-            this.spriteSheet = spriteSheet;
-            this.frames = frames;
-            this.frameDuration = frameDuration;
-            this.isLooping = isLooping;
-        }
-
-        public void Update(float deltaTime)
-        {
-            if (isFinished)
+            if (currentState == state)
                 return;
+            currentState = state;
+            currentAnim = animations[state];
+            currentAnim.Reset();
+        }
 
-            timer += deltaTime;
-            if (timer >= frameDuration)
-            {
-                timer -= frameDuration;
-                currentIndex++;
+        public void Update(GameTime gameTime)
+        {
+            var deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
+            currentAnim?.Update(deltaTime);
+        }
 
-                if (currentIndex >= frames.Length)
-                {
-                    if (isLooping)
-                    {
-                        currentIndex = 0;
-                    }
-                    else
-                    {
-                        currentIndex = frames.Length - 1;
-                        isFinished = true;
-                    }
-                }
-            }
+        public void SetFrameDuration(float duration)
+        {
+            currentAnim.FrameDuration = duration;
         }
 
         public Rectangle GetCurrentFrameRect()
         {
-            return spriteSheet.GetFrameRect(frames[currentIndex]);
-        }
-
-        public void Reset()
-        {
-            currentIndex = 0;
-            timer = 0;
-            isFinished = false;
+            return currentAnim.GetCurrentFrameRect();
         }
     }
 }

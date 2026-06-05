@@ -1,9 +1,6 @@
 ﻿using GameProject.Scenes;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
-using System;
-using System.Diagnostics;
+
 
 namespace GameProject
 {
@@ -12,6 +9,7 @@ namespace GameProject
         GraphicsDeviceManager _graphics;
         Scene currentScene;
         Scene nextScene;
+        GameplayScene pausedGameplayScene;
 
         public Game1()
         {
@@ -44,9 +42,18 @@ namespace GameProject
         {
             if (nextScene != null)
             {
-                currentScene.Dispose();
+                if (currentScene != pausedGameplayScene)
+                {
+                    currentScene.Dispose();
+                }
+                
                 currentScene = nextScene;
-                currentScene.Initialize();
+                
+                if (currentScene != pausedGameplayScene)
+                {
+                    currentScene.Initialize();
+                }
+                
                 nextScene = null;
             }
 
@@ -61,44 +68,13 @@ namespace GameProject
             base.Draw(gameTime);
         }
 
-        private void SubscribeToMenuActions(MenuScene menuScene)
-        {
-            menuScene.OnPlayGame += () =>
-            {
-                GameplayScene gameplayScene = new GameplayScene(GraphicsDevice, Content);
-                IsMouseVisible = false;
-                ChangeScene(gameplayScene);
-                SubscribeToGameplayActions(gameplayScene);
-            };
-
-            menuScene.OnQuitGame += Exit;
-        }
-
-        private void SubscribeToGameplayActions(GameplayScene gameplayScene)
-        {
-            gameplayScene.OnGameOver += () =>
-            {
-                MenuScene newMenuScene = new MenuScene(GraphicsDevice, Content, Color.IndianRed, "You've lost");
-                IsMouseVisible = true;
-                ChangeScene(newMenuScene);
-                SubscribeToMenuActions(newMenuScene);
-            };
-
-            gameplayScene.OnGameWon += () =>
-            {
-                MenuScene newMenuScene = new MenuScene(GraphicsDevice, Content, Color.YellowGreen, "You won!");
-                IsMouseVisible = true;
-                ChangeScene(newMenuScene);
-                SubscribeToMenuActions(newMenuScene);
-            };
-        }
-
         protected override void Dispose(bool disposing)
         {
             if (disposing)
             {
                 currentScene.Dispose();
                 nextScene?.Dispose();
+                pausedGameplayScene?.Dispose();
                 _graphics.Dispose();
             }
             base.Dispose(disposing);
@@ -107,6 +83,62 @@ namespace GameProject
         public void ChangeScene(Scene newScene)
         {
             nextScene = newScene;
+        }
+
+        private void SubscribeToMenuActions(MenuScene menuScene)
+        {
+            menuScene.OnPlay += () =>
+            {
+                GameplayScene gameplayScene = new GameplayScene(GraphicsDevice, Content);
+                IsMouseVisible = false;
+                ChangeScene(gameplayScene);
+                SubscribeToGameplayActions(gameplayScene);
+            };
+
+            menuScene.OnQuit += Exit;
+        }
+
+        private void SubscribeToGameplayActions(GameplayScene gameplayScene)
+        {
+            gameplayScene.OnLoss += () =>
+            {
+                MenuScene newMenuScene = new MenuScene(GraphicsDevice, Content, Color.IndianRed, "You've lost");
+                IsMouseVisible = true;
+                ChangeScene(newMenuScene);
+                SubscribeToMenuActions(newMenuScene);
+            };
+
+            gameplayScene.OnWin += () =>
+            {
+                MenuScene newMenuScene = new MenuScene(GraphicsDevice, Content, Color.YellowGreen, "You won!");
+                IsMouseVisible = true;
+                ChangeScene(newMenuScene);
+                SubscribeToMenuActions(newMenuScene);
+            };
+
+            gameplayScene.OnPause += () =>
+            {
+                MenuScene pauseMenuScene = new MenuScene(GraphicsDevice, Content, Color.Gray, "Paused", true);
+                IsMouseVisible = true;
+                if (pausedGameplayScene != gameplayScene)
+                {
+                    pausedGameplayScene = gameplayScene;
+                }
+                ChangeScene(pauseMenuScene);
+                SubscribeToPauseMenuActions(pauseMenuScene);
+            };
+        }
+
+        private void SubscribeToPauseMenuActions(MenuScene pauseMenuScene)
+        {
+            pauseMenuScene.OnContinue += () =>
+            {
+                IsMouseVisible = false;
+                ChangeScene(pausedGameplayScene);
+                pausedGameplayScene.IsPaused = false;             
+            };
+
+            pauseMenuScene.OnQuit += Exit;
         }
     }
 }

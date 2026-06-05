@@ -2,13 +2,14 @@
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
+using System.Data.SqlTypes;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GameProject
+namespace GameProject.Collision
 {
-    public readonly struct Circle
+    public readonly struct Circle : INullable
     {
         public readonly PositionComponent Location;
 
@@ -26,12 +27,7 @@ namespace GameProject
             Radius = radius;
         }
 
-        public bool Intersects(Circle other)
-        {
-            int radiiSquared = (this.Radius + other.Radius) * (this.Radius + other.Radius);
-            float distanceSquared = Vector2.DistanceSquared(this.Location.vector, other.Location.vector);
-            return distanceSquared < radiiSquared;
-        }
+        public bool IsNull => Radius == 0 || Location == null || X == 0 || Y == 0;
 
         public bool Intersects(Rectangle rectangle)
         {
@@ -41,8 +37,8 @@ namespace GameProject
             float catetX = Location.X - closestX;
             float catetY = Location.Y - closestY;
 
-            float hypotenuseSquared = (catetX * catetX) + (catetY * catetY);
-            return hypotenuseSquared < (Radius * Radius);
+            float hypotenuseSq = catetX * catetX + catetY * catetY;
+            return hypotenuseSq < Radius * Radius;
         }
     }
 }

@@ -12,7 +12,8 @@ namespace GameProject.Components
 {
     public class InputComponent
     {
-        public SpeedComponent speedComponent;
+        SpeedComponent speedComponent;
+        PositionComponent positionComponent;
         public Action OnUp;
         public Action OnDown;
         public Action OnRight;
@@ -20,12 +21,13 @@ namespace GameProject.Components
         public Action OnIdle;
         
 
-        public InputComponent(SpeedComponent speedComponent)
+        public InputComponent(SpeedComponent speedComponent, PositionComponent positionComponent)
         {
             this.speedComponent = speedComponent;
+            this.positionComponent = positionComponent;
         }
 
-        public void Update(PositionComponent positionComponent, GameTime gameTime)
+        public void Update(GameTime gameTime)
         {
             bool isMoving = false;
             var key = Keyboard.GetState();

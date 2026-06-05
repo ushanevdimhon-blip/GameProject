@@ -1,26 +1,23 @@
 ﻿using GameProject.Animation;
+using GameProject.Collision;
 using GameProject.Components;
-using GameProject.TilemapItems;
+using GameProject.TilemapManager;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GameProject.Entities
 {
     public class Player
     {
         Texture2D model;
-        Rectangle rectangle;
-        AnimationManager animationManager;
+        AnimationComponent animationComponent;
         RenderComponent render;
         InputComponent input;
         SpeedComponent speedComponent;
         HealthComponent healthComponent;
+        KeysComponent keysComponent;
         public PositionComponent positionComponent;
         public CollisionComponent collision;
 
@@ -29,87 +26,45 @@ namespace GameProject.Entities
         public Action OnHeal;
         public Action OnAllKeysCollected;
 
-        float width;
-        float height;
-        int keysToCollect;
-        int keysCollected;
-
-        public int KeysCollected { get { return keysCollected; } set { keysCollected = value; } }
-        /// <summary>
-        /// ширина модели умноженная на масштаб
-        /// </summary>
-        public float Width { get { return width; } private set { width = value; } }
-        /// <summary>
-        /// высота модели умноженная на масштаб
-        /// </summary>
-        public float Height { get { return height; } private set { height = value; } }
-
+        public int KeysCollected { get { return keysComponent.KeysCollected; } private set { } }
         public int Health { get { return healthComponent.Health; } }
-        public int MaxHealth { get { return healthComponent.MaxHealth; } }
-        public float Stamina { get { return input.speedComponent.stamina; } }
-        public float MaxStamina { get { return input.speedComponent.MaxStamina; } }
+        public float Stamina { get { return speedComponent.stamina; } }
 
-        public Player(SpriteSheet sheet, Rectangle rectangle, float scale, int keysToCollect, Tilemap tilemap)
+        public const int MaxHealth = 100;
+        public const float MaxStamina = 100.0f;
+        private const float BaseVelocity = 160.0f;
+
+        public Player(SpriteSheet sheet, Rectangle rectangle, float x, float y, float scale, int keysToCollect, Tilemap tilemap)
         {
-            this.model = sheet.texture;
-            this.rectangle = rectangle;
-            width = (rectangle.Width-10) * scale;
-            height = rectangle.Height * scale;
-            this.keysToCollect = keysToCollect;
+            model = sheet.texture;
+            var width = (rectangle.Width-10) * scale;
+            var height = rectangle.Height * scale;
 
-            animationManager = new AnimationManager();
-            //вынести в animationManager? типа init
-            animationManager.Add(AnimState.WalkDown, 
-                new AnimationComponent(sheet, new int[] { 16, 17, 18, 19, 20, 21, 22, 23}, 0.1f, true));
-            animationManager.Add(AnimState.WalkUp,
-                new AnimationComponent(sheet, new int[] { 24, 25, 26, 27, 28, 29, 30, 31 }, 0.1f, true));
-            animationManager.Add(AnimState.WalkLeft,
-                new AnimationComponent(sheet, new int[] { 8, 9, 10, 11, 12, 13, 14, 15 }, 0.1f, true));
-            animationManager.Add(AnimState.WalkRight,
-                new AnimationComponent(sheet, new int[] { 0, 1, 2, 3, 4, 5, 6, 7 }, 0.1f, true));
-            animationManager.Add(AnimState.Idle,
-                new AnimationComponent(sheet, new int[] { 32, 33, 34, 35 }, 0.1f, true));
-            animationManager.currentAnim = animationManager.animations[AnimState.Idle];
-
-            speedComponent = new SpeedComponent(140.0f, 100.0f);//сделать константой
+            SetAnimations(sheet);
+            
+            positionComponent=  new PositionComponent(x, y);
+            speedComponent = new SpeedComponent(BaseVelocity, MaxStamina);
             render = new RenderComponent(model, scale);
-            Spawn(tilemap);
-            input = new InputComponent(speedComponent);
+            input = new InputComponent(speedComponent, positionComponent);
             collision = new CollisionComponent(positionComponent, width, height);
-            healthComponent = new HealthComponent(100);
+            healthComponent = new HealthComponent(MaxHealth);
+            keysComponent = new KeysComponent(keysToCollect);
 
-            OnDeath += () => Debug.WriteLine("Player died!");
-            input.OnUp += () => animationManager.Play(AnimState.WalkUp);
-            input.OnDown += () => animationManager.Play(AnimState.WalkDown);
-            input.OnRight += () => animationManager.Play(AnimState.WalkRight);
-            input.OnLeft += () => animationManager.Play(AnimState.WalkLeft);
-            input.OnIdle += () => animationManager.Play(AnimState.Idle);
+            SubcribeToEvents();
         }
 
         public void Update(GameTime gameTime)
         {
-            if (keysCollected >= keysToCollect)
-            {
-                OnAllKeysCollected?.Invoke();
-                keysCollected = 0;
-            }
-            input.Update(positionComponent, gameTime);
-            collision.UpdateRectangleCollision();
-            animationManager.currentAnim.FrameDuration = speedComponent.isSprinting ? 0.04f : 0.1f;
-            animationManager.Update((float)gameTime.ElapsedGameTime.TotalSeconds);
+            keysComponent.Update();
+            input.Update(gameTime);
+            collision.Update();
+            animationComponent.SetFrameDuration(speedComponent.isSprinting ? 0.04f : 0.1f);
+            animationComponent.Update(gameTime);
         }
 
         public void Draw(SpriteBatch spriteBatch)
         {
-            render.Draw(spriteBatch, positionComponent, animationManager.GetCurrentFrameRect());
-        }
-
-        public void Spawn(Tilemap tilemap)
-        {
-            var tileInd = tilemap.GetRandomFloorTileIndex();
-            var tile = tilemap.tiles[tileInd.Y, tileInd.X];
-            positionComponent = new PositionComponent(tile.position.X, tile.position.Y);
-            Debug.WriteLine($"Player spawned at: Position({tile.position.X},{tile.position.Y}), TileIndex({tileInd.Y},{tileInd.X})");
+            render.Draw(spriteBatch, positionComponent, animationComponent.GetCurrentFrameRect());
         }
 
         public void TakeDamage(int damage)
@@ -127,9 +82,43 @@ namespace GameProject.Entities
             speedComponent.RestoreStamina();
         }
 
+        public void CollectKey()
+        {
+            keysComponent.CollectKey();
+        }
+
         public void Block()
         {
             positionComponent.Block();
+        }
+
+        private void SubcribeToEvents()
+        {
+            input.OnUp += () => animationComponent.Play(AnimState.WalkUp);
+            input.OnDown += () => animationComponent.Play(AnimState.WalkDown);
+            input.OnRight += () => animationComponent.Play(AnimState.WalkRight);
+            input.OnLeft += () => animationComponent.Play(AnimState.WalkLeft);
+            input.OnIdle += () => animationComponent.Play(AnimState.Idle);
+
+            keysComponent.OnAllKeysCollected += () => OnAllKeysCollected?.Invoke();
+        }
+
+        private void SetAnimations(SpriteSheet sheet)
+        {
+            animationComponent = new AnimationComponent();
+
+            animationComponent.Add(AnimState.WalkDown,
+                new Animation.Animation(sheet, new int[] { 16, 17, 18, 19, 20, 21, 22, 23 }, true));
+            animationComponent.Add(AnimState.WalkUp,
+                new Animation.Animation(sheet, new int[] { 24, 25, 26, 27, 28, 29, 30, 31 }, true));
+            animationComponent.Add(AnimState.WalkLeft,
+                new Animation.Animation(sheet, new int[] { 8, 9, 10, 11, 12, 13, 14, 15 }, true));
+            animationComponent.Add(AnimState.WalkRight,
+                new Animation.Animation(sheet, new int[] { 0, 1, 2, 3, 4, 5, 6, 7 }, true));
+            animationComponent.Add(AnimState.Idle,
+                new Animation.Animation(sheet, new int[] { 32, 33, 34, 35 }, true));
+
+            animationComponent.currentAnim = animationComponent.animations[AnimState.Idle];
         }
     }
 }

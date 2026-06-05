@@ -17,11 +17,7 @@ namespace GameProject.Animation
         public bool isLooping;
         public bool isFinished;
 
-        public float FrameDuration
-        {
-            get { return frameDuration; }
-            set { frameDuration = value; }
-        }
+        public float FrameDuration { get { return frameDuration; } set { frameDuration = value; } }
 
         public Animation(SpriteSheet spriteSheet, int[] frames, bool isLooping)
         {

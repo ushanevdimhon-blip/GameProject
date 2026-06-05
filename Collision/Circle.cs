@@ -29,13 +29,6 @@ namespace GameProject.Collision
 
         public bool IsNull => Radius == 0 || Location == null || X == 0 || Y == 0;
 
-        public bool Intersects(Circle other)
-        {
-            int radiiSquared = (Radius + other.Radius) * (Radius + other.Radius);
-            float distanceSquared = Vector2.DistanceSquared(Location.vector, other.Location.vector);
-            return distanceSquared < radiiSquared;
-        }
-
         public bool Intersects(Rectangle rectangle)
         {
             float closestX = Math.Clamp(Location.X, rectangle.Left, rectangle.Right);
@@ -44,8 +37,8 @@ namespace GameProject.Collision
             float catetX = Location.X - closestX;
             float catetY = Location.Y - closestY;
 
-            float hypotenuseSquared = catetX * catetX + catetY * catetY;
-            return hypotenuseSquared < Radius * Radius;
+            float hypotenuseSq = catetX * catetX + catetY * catetY;
+            return hypotenuseSq < Radius * Radius;
         }
     }
 }

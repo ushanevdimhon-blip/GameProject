@@ -1,5 +1,5 @@
 ﻿using GameProject.Components;
-using GameProject.TilemapItems;
+using GameProject.TilemapManager;
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
@@ -9,19 +9,19 @@ using System.Threading.Tasks;
 
 namespace GameProject.Collision
 {
-    public static class CollisionChecker
+    public class CollisionChecker
     {
-        public static bool CheckRectangleCollision(CollisionComponent collision1, CollisionComponent collision2)
+        public bool CheckRectangleCollision(CollisionComponent collision1, CollisionComponent collision2)
         {
             return collision1.collisionRectangle.Intersects(collision2.collisionRectangle);
         }
 
-        public static bool CheckCircleCollision(CollisionComponent collision1, CollisionComponent collision2)
+        public bool CheckCircleCollision(CollisionComponent collision1, CollisionComponent collision2)
         {
             return collision1.collisionCircle.Intersects(collision2.collisionRectangle);
         }
 
-        public static void GetCameraCollision(CollisionComponent collisionObject, Rectangle cameraBounds)
+        public void GetCameraCollision(CollisionComponent collisionObject, Rectangle cameraBounds)
         {
             if (collisionObject.collisionRectangle.Left < cameraBounds.Left)
             {
@@ -42,7 +42,7 @@ namespace GameProject.Collision
             }
         }
 
-        public static void CheckTilesCollision(Tilemap tilemap, PositionComponent currentPosition,
+        public void CheckTilesCollision(TilemapManager.Tilemap tilemap, PositionComponent currentPosition,
             CollisionComponent collision, Action<Tile> colAction)
         {
             int tileX = (int)(currentPosition.X / tilemap.TileWidth);

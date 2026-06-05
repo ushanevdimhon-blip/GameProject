@@ -1,5 +1,5 @@
 ﻿using GameProject.Collision;
-using GameProject.TilemapItems;
+using GameProject.TilemapManager;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -65,7 +65,7 @@ namespace GameProject.DebugHelper
             }
         }
 
-        public static void DrawTilesCollision(Tilemap tilemap, SpriteBatch _spriteBatch)
+        public static void DrawTilesCollision(TilemapManager.Tilemap tilemap, SpriteBatch _spriteBatch)
         {
             for (int i = 0; i < tilemap.tiles.GetLength(0); i++)
             {

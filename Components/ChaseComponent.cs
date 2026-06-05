@@ -1,4 +1,4 @@
-﻿using GameProject.TilemapItems;
+﻿using GameProject.TilemapManager;
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
@@ -18,14 +18,14 @@ namespace GameProject.Components
 
     public class ChaseComponent
     {
-        private readonly Tilemap tilemap;
+        private readonly TilemapManager.Tilemap tilemap;
         private List<PositionComponent> currentPath;
         private float MovementSpeed;
         private float Interval = 0.1f;
         private float time = 0.0f;
         public Vector2 CurrentDirection { get; private set; } = Vector2.Zero;
 
-        public ChaseComponent(Tilemap tilemap, float speed)
+        public ChaseComponent(TilemapManager.Tilemap tilemap, float speed)
         {
             this.tilemap = tilemap;
             this.MovementSpeed = speed;

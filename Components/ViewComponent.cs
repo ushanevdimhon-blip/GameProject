@@ -1,4 +1,4 @@
-﻿using GameProject.TilemapItems;
+﻿using GameProject.TilemapManager;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,7 +15,7 @@ namespace GameProject.Components
             this.positionComponent = positionComponent;
         }
 
-        public bool HasLineOfSight(PositionComponent playerPosition, Tilemap map)
+        public bool HasLineOfSight(PositionComponent playerPosition, TilemapManager.Tilemap map)
         {
             float dx = playerPosition.X - positionComponent.X;
             float dy = playerPosition.Y - positionComponent.Y;

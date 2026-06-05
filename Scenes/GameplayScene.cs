@@ -1,9 +1,10 @@
 ﻿using GameProject.Animation;
+using GameProject.Camera;
 using GameProject.Collision;
 using GameProject.Components;
 using GameProject.DebugHelper;
 using GameProject.Entities;
-using GameProject.TilemapItems;
+using GameProject.TilemapManager;
 using GameProject.UI;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
@@ -32,10 +33,11 @@ namespace GameProject.Scenes
         Texture2D doorTexture;
         Texture2D medTexture;
         Texture2D boostTexture;
-        Camera camera;
+        CameraManager cameraManager;
         UIPresenter uiPresenter;
         UIModel uiModel;
         UIView uiView;
+        CollisionChecker collisionChecker;
 
         List<(int X, int Y)> patrolTargets;
         string[,] tileData;
@@ -77,18 +79,16 @@ namespace GameProject.Scenes
             uiView = new UIView(_graphicsDevice);
             uiPresenter = new UIPresenter(uiModel, uiView);
 
-            player = new Player(playerSpriteSheet, playerSpriteSheet.GetFrameRect(0), 2.0f, keysToCollect, tilemap);
+            player = new Player(playerSpriteSheet, playerSpriteSheet.GetFrameRect(0), 1000, 200, 2.0f, keysToCollect, tilemap);
             SubscribeToPlayerEvents();
 
             enemy = new Enemy(enemySpriteSheet, enemySpriteSheet.GetFrameRect(0), 3.0f, tilemap);
             SubscribeToEnemyEvents();
 
-            camera = new Camera(_graphicsDevice.PresentationParameters.BackBufferWidth,
+            cameraManager = new CameraManager(_graphicsDevice.PresentationParameters.BackBufferWidth,
                 _graphicsDevice.PresentationParameters.BackBufferHeight);
 
-            camera.Follow(player.positionComponent);
-            camera.Clamp(worldWidth, worldHeight);
-            camera.Update();
+            collisionChecker = new CollisionChecker();
         }
 
         public override void LoadContent()
@@ -128,19 +128,18 @@ namespace GameProject.Scenes
             player.Update(gameTime);
             enemy.Update(gameTime);
 
-            camera.Follow(player.positionComponent);
-            camera.Clamp(worldWidth, worldHeight);
-            camera.Update();
+            cameraManager.Follow(player.positionComponent);
+            cameraManager.Clamp(worldWidth, worldHeight);
+            cameraManager.Update();
 
             uiPresenter.Update(gameTime, player.Health, player.Stamina, keysToCollect - player.KeysCollected);
 
-            //вынести
-            if (CollisionChecker.CheckRectangleCollision(player.collision, enemy.collision))
+            if (collisionChecker.CheckRectangleCollision(player.collision, enemy.collision))
             {
                 enemy.Attack();
             }
 
-            if (CollisionChecker.CheckCircleCollision(enemy.collision, player.collision) &&
+            if (collisionChecker.CheckCircleCollision(enemy.collision, player.collision) &&
                 enemy.HasLineOfSight(player.positionComponent, tilemap))
             {
                 enemy.Chase(player.positionComponent, gameTime);
@@ -161,19 +160,19 @@ namespace GameProject.Scenes
                 }
             }
 
-            CollisionChecker.CheckTilesCollision(tilemap, player.positionComponent, player.collision, player.collision.TileCollisionDetected);
+            collisionChecker.CheckTilesCollision(tilemap, player.positionComponent, player.collision, player.collision.TileCollisionDetected);
 
-            Rectangle cameraBounds = camera.GetCameraBounds();
-            CollisionChecker.GetCameraCollision(player.collision, cameraBounds);
+            Rectangle cameraBounds = cameraManager.GetCameraBounds();
+            collisionChecker.GetCameraCollision(player.collision, cameraBounds);
         }
 
         public override void Draw(GameTime gameTime)
         {
             _graphicsDevice.Clear(Color.Beige);
 
-            _spriteBatch.Begin(transformMatrix: camera.Matrix);
+            _spriteBatch.Begin(transformMatrix: cameraManager.GetMatrix());
 
-            var (c1, c2, r1, r2) = camera.GetVisibleRange(tilemap.TileWidth,
+            var (c1, c2, r1, r2) = cameraManager.GetVisibleRange(tilemap.TileWidth,
                                                     tilemap.tiles.GetLength(1),
                                                     tilemap.tiles.GetLength(0));
             tilemap.Draw(_spriteBatch, c1, c2, r1, r2);
@@ -210,7 +209,7 @@ namespace GameProject.Scenes
                 if (tile.Type == TileType.Key)
                 {
                     tilemap.Update((tile.TileIndex.Y, tile.TileIndex.X), key2Texture, TileType.Floor);
-                    player.KeysCollected++;
+                    player.CollectKey();
                     patrolTargets[patrolTargets.IndexOf((tile.TileIndex.Y, tile.TileIndex.X))] = tilemap.GetRandomFloorTileIndex();
                 }
                 if (tile.Type == TileType.Medicine)
@@ -254,5 +253,4 @@ namespace GameProject.Scenes
             enemy.OnAttack += () => player.TakeDamage(40);
         }
     }
-}//!!!!ПРИ ОТРИСОВКЕ ТЕПЕРЬ МОДЕЛЬ РИСУЕТСЯ ОТ ЦЕНТРА(ТОЧНЕЕ ЦЕНТР МОДЕЛЬКИ НАТЯГИВАЕТСЯ НА КООРДИНАТЫ),
-//А НЕ ОТ ВЕРХНЕГО ЛЕВОГО УГЛА!!!!!
+}

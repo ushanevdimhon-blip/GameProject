@@ -1,4 +1,4 @@
-﻿using GameProject.TilemapItems;
+﻿using GameProject.TilemapManager;
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
@@ -15,9 +15,9 @@ namespace GameProject.Components
         ChaseComponent chaseComponent;
         int counter = 0;
         float patrolVelocity;
-        Tilemap tilemap;
+        TilemapManager.Tilemap tilemap;
 
-        public PatrolComponent(Tilemap tilemap, ChaseComponent chaseComponent, float patrolVelocity)
+        public PatrolComponent(TilemapManager.Tilemap tilemap, ChaseComponent chaseComponent, float patrolVelocity)
         {
             this.patrolVelocity = patrolVelocity;
             this.tilemap = tilemap;

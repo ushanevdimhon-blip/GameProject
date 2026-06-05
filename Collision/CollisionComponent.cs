@@ -1,5 +1,5 @@
-﻿using GameProject.Collision;
-using GameProject.TilemapItems;
+﻿using GameProject.Components;
+using GameProject.TilemapManager;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GameProject.Components
+namespace GameProject.Collision
 {
     public class CollisionComponent
     {
@@ -27,8 +27,6 @@ namespace GameProject.Components
             this.currentPosition = currentPosition;
             collisionRectangle = new Rectangle((int)(currentPosition.X - width / 2),
                 (int)(currentPosition.Y - height / 2), (int)width, (int)height);
-            //(int)(currentPosition.X - width / 2),(int)(currentPosition.Y - height / 2) - это для того,
-            //чтобы нарисовать прямоугольник, т.к. он рисуется от левого верхнего угла
             if (radius > 0)
             {
                 this.radius = radius;
@@ -45,8 +43,8 @@ namespace GameProject.Components
 
         private void UpdateRectangleCollision()
         {
-            collisionRectangle = new Rectangle((int)(currentPosition.X - width / 2),
-                (int)(currentPosition.Y - height / 2), (int)width, (int)height);
+            collisionRectangle.X = (int)(currentPosition.X - width / 2);
+            collisionRectangle.Y = (int)(currentPosition.Y - height / 2);
         }
 
         private void UpdateCircleCollision()

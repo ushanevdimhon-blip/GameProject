@@ -1,15 +1,11 @@
 ﻿using GameProject.Animation;
+using GameProject.Collision;
 using GameProject.Components;
-using GameProject.TilemapItems;
+using GameProject.TilemapManager;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Numerics;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GameProject.Entities
 {

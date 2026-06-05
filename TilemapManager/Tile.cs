@@ -1,4 +1,5 @@
-﻿using GameProject.Components;
+﻿using GameProject.Collision;
+using GameProject.Components;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
@@ -6,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GameProject.TilemapItems
+namespace GameProject.TilemapManager
 {
     public class Tile
     {

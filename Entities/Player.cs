@@ -1,14 +1,11 @@
 ﻿using GameProject.Animation;
+using GameProject.Collision;
 using GameProject.Components;
-using GameProject.TilemapItems;
+using GameProject.TilemapManager;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GameProject.Entities
 {
@@ -20,6 +17,7 @@ namespace GameProject.Entities
         InputComponent input;
         SpeedComponent speedComponent;
         HealthComponent healthComponent;
+        KeysComponent keysComponent;
         public PositionComponent positionComponent;
         public CollisionComponent collision;
 
@@ -28,43 +26,36 @@ namespace GameProject.Entities
         public Action OnHeal;
         public Action OnAllKeysCollected;
 
-        int keysToCollect;
-        int keysCollected;
-
-        public int KeysCollected { get { return keysCollected; } set { keysCollected = value; } }
+        public int KeysCollected { get { return keysComponent.KeysCollected; } private set { } }
         public int Health { get { return healthComponent.Health; } }
         public float Stamina { get { return speedComponent.stamina; } }
 
         public const int MaxHealth = 100;
         public const float MaxStamina = 100.0f;
-        private const float BaseVelocity = 140.0f;
+        private const float BaseVelocity = 160.0f;
 
-        public Player(SpriteSheet sheet, Rectangle rectangle, float scale, int keysToCollect, Tilemap tilemap)
+        public Player(SpriteSheet sheet, Rectangle rectangle, float x, float y, float scale, int keysToCollect, Tilemap tilemap)
         {
             model = sheet.texture;
             var width = (rectangle.Width-10) * scale;
             var height = rectangle.Height * scale;
-            this.keysToCollect = keysToCollect;
 
             SetAnimations(sheet);
-            Spawn(tilemap);
-
+            
+            positionComponent=  new PositionComponent(x, y);
             speedComponent = new SpeedComponent(BaseVelocity, MaxStamina);
             render = new RenderComponent(model, scale);
             input = new InputComponent(speedComponent, positionComponent);
             collision = new CollisionComponent(positionComponent, width, height);
             healthComponent = new HealthComponent(MaxHealth);
+            keysComponent = new KeysComponent(keysToCollect);
 
             SubcribeToEvents();
         }
 
         public void Update(GameTime gameTime)
         {
-            if (keysCollected >= keysToCollect)
-            {
-                OnAllKeysCollected?.Invoke();
-                keysCollected = 0;
-            }
+            keysComponent.Update();
             input.Update(gameTime);
             collision.Update();
             animationComponent.SetFrameDuration(speedComponent.isSprinting ? 0.04f : 0.1f);
@@ -74,14 +65,6 @@ namespace GameProject.Entities
         public void Draw(SpriteBatch spriteBatch)
         {
             render.Draw(spriteBatch, positionComponent, animationComponent.GetCurrentFrameRect());
-        }
-
-        public void Spawn(Tilemap tilemap)
-        {
-            var tileInd = tilemap.GetRandomFloorTileIndex();
-            var tile = tilemap.tiles[tileInd.Y, tileInd.X];
-            positionComponent = new PositionComponent(tile.position.X, tile.position.Y);
-            Debug.WriteLine($"Player spawned at: Position({tile.position.X},{tile.position.Y}), TileIndex({tileInd.Y},{tileInd.X})");
         }
 
         public void TakeDamage(int damage)
@@ -99,6 +82,11 @@ namespace GameProject.Entities
             speedComponent.RestoreStamina();
         }
 
+        public void CollectKey()
+        {
+            keysComponent.CollectKey();
+        }
+
         public void Block()
         {
             positionComponent.Block();
@@ -111,6 +99,8 @@ namespace GameProject.Entities
             input.OnRight += () => animationComponent.Play(AnimState.WalkRight);
             input.OnLeft += () => animationComponent.Play(AnimState.WalkLeft);
             input.OnIdle += () => animationComponent.Play(AnimState.Idle);
+
+            keysComponent.OnAllKeysCollected += () => OnAllKeysCollected?.Invoke();
         }
 
         private void SetAnimations(SpriteSheet sheet)

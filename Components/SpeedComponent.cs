@@ -45,12 +45,12 @@ namespace GameProject.Components
             {
                 if (isSprinting && stamina > 0)
                 {
-                    stamina -= 30.0f * deltaTime;
+                    stamina -= 20.0f * deltaTime;
                     stamina = Math.Max(0, stamina);
                 }
                 else if (!isSprinting && stamina < 100)
                 {
-                    stamina += 10.0f * deltaTime;
+                    stamina += 20.0f * deltaTime;
                     stamina = Math.Min(100, stamina);
                 }
             }

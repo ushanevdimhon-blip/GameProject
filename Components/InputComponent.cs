@@ -31,9 +31,12 @@ namespace GameProject.Components
         {
             bool isMoving = false;
             var key = Keyboard.GetState();
-
+            
             if (key.IsKeyDown(Keys.LeftShift))
                 speedComponent.Sprinting();
+
+            if (key.IsKeyUp(Keys.LeftShift))
+                speedComponent.isSprinting = false;
 
             speedComponent.Update(gameTime);
 

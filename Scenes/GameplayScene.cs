@@ -64,7 +64,7 @@ namespace GameProject.Scenes
         {
             base.Initialize();
 
-            tilemap = new Tilemap(110, 110, wallTexture, floorTexture, doorTexture);
+            tilemap = new Tilemap(115, 115, wallTexture, floorTexture, doorTexture);
             tilemap.Create(tileData);
 
             tilemap.SpawnItem(TileType.Key, keyTexture, keysToCollect);
@@ -178,11 +178,8 @@ namespace GameProject.Scenes
             tilemap.Draw(_spriteBatch, c1, c2, r1, r2);
 
             player.Draw(_spriteBatch);
-            Debug.DrawRectangle(_spriteBatch, player.collision.collisionRectangle, Color.Green);
 
             enemy.Draw(_spriteBatch);
-            Debug.DrawRectangle(_spriteBatch, enemy.collision.collisionRectangle, Color.Green);
-            Debug.DrawCircle(_spriteBatch, enemy.collision.collisionCircle, Color.Green);
 
             _spriteBatch.End();
 

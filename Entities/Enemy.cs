@@ -55,7 +55,9 @@ namespace GameProject.Entities
             attackComponent.Update(gameTime);
             if (attackComponent.cooldown >= CooldownTime)
                 chaseComponent.ChangeMovementSpeed(BaseVelocity);
-            collision.Update();
+            
+            collision.Update(chaseComponent.CurrentDirection);
+            
             directionComponent.Update(chaseComponent.CurrentDirection);
             animationComponent.Update(gameTime);
         }

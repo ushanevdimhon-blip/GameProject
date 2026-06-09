@@ -14,11 +14,13 @@ namespace GameProject.Collision
     {
         public Rectangle collisionRectangle;
         public Circle collisionCircle;
+        public DirectionCircle directionCircle;
         public int radius;
         public float width;
         public float height;
         public PositionComponent currentPosition;
         public Action<Tile> TileCollisionDetected;
+        private Vector2 direction = Vector2.Zero;
 
         public CollisionComponent(PositionComponent currentPosition, float width, float height, int radius=0)
         {
@@ -34,11 +36,14 @@ namespace GameProject.Collision
             }    
         }
 
-        public void Update()
-        {
+        public void Update(Vector2 newDirection = default)
+        {            
             UpdateRectangleCollision();
             if (!collisionCircle.IsNull)
+            {
+                direction = newDirection;
                 UpdateCircleCollision();
+            }           
         }
 
         private void UpdateRectangleCollision()
@@ -50,6 +55,7 @@ namespace GameProject.Collision
         private void UpdateCircleCollision()
         {
             collisionCircle = new Circle(currentPosition, radius);
+            directionCircle = new DirectionCircle(collisionCircle, direction);
         }
     }
 }

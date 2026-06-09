@@ -18,7 +18,7 @@ namespace GameProject.Collision
 
         public bool CheckCircleCollision(CollisionComponent collision1, CollisionComponent collision2)
         {
-            return collision1.collisionCircle.Intersects(collision2.collisionRectangle);
+            return collision1.directionCircle.Intersects(collision2.collisionRectangle);
         }
 
         public void GetCameraCollision(CollisionComponent collisionObject, Rectangle cameraBounds)
@@ -42,7 +42,7 @@ namespace GameProject.Collision
             }
         }
 
-        public void CheckTilesCollision(TilemapManager.Tilemap tilemap, PositionComponent currentPosition,
+        public void CheckTilesCollision(Tilemap tilemap, PositionComponent currentPosition,
             CollisionComponent collision, Action<Tile> colAction)
         {
             int tileX = (int)(currentPosition.X / tilemap.TileWidth);

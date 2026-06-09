@@ -24,7 +24,7 @@ namespace GameProject
 
         protected override void Initialize()
         {
-            MenuScene menuScene = new MenuScene(GraphicsDevice, Content, Color.Beige, "Play Game");
+            MenuScene menuScene = new MenuScene(GraphicsDevice, Content, Color.Beige, "Find. Press. Run.");
             currentScene = menuScene;
             currentScene.Initialize();
 

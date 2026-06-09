@@ -224,3 +224,6 @@
 /processorParam:TextureFormat=Color
 /build:images/Wall.jpg
 
+#begin map.txt
+/copy:map.txt
+

@@ -109,7 +109,7 @@ namespace GameProject.Scenes
             medTexture = Content.Load<Texture2D>("Images/med_old");
             boostTexture = Content.Load<Texture2D>("Images/boost_old_2");
 
-            tileData = Tilemap.FromFile("map.txt");
+            tileData = Tilemap.FromFile("Content/map.txt");
         }
 
         public override void Update(GameTime gameTime)

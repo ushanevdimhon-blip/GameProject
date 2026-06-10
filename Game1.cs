@@ -110,7 +110,7 @@ namespace GameProject
 
             gameplayScene.OnWin += () =>
             {
-                MenuScene newMenuScene = new MenuScene(GraphicsDevice, Content, Color.YellowGreen, "You won!");
+                MenuScene newMenuScene = new MenuScene(GraphicsDevice, Content, Color.YellowGreen, "You win!");
                 IsMouseVisible = true;
                 ChangeScene(newMenuScene);
                 SubscribeToMenuActions(newMenuScene);

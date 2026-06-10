@@ -59,26 +59,24 @@ namespace GameProject.Components
             float distanceToMove = MovementSpeed * deltaTime;
             var currentPos = new Vector2(enemyPosition.X, enemyPosition.Y);
 
-            for (int i = 1; i < currentPath.Count; i++)
+            if (currentPath.Count <= 1)
+                return;
+
+            var next = new Vector2(currentPath[1].X, currentPath[1].Y);
+            Vector2 direction = next - currentPos;
+            float distance = direction.Length();
+
+            if (distance > distanceToMove)
             {
-                var next = new Vector2(currentPath[i].X, currentPath[i].Y);
-                Vector2 direction = next - currentPos;
-                float distance = direction.Length();
-
-                if (distance > distanceToMove)
-                {
-                    direction.Normalize();
-                    CurrentDirection = direction;
-                    currentPos += direction * distanceToMove;
-                    break;
-                }
-                else
-                {
-                    currentPos = next;
-                    distanceToMove -= distance;
-                }
+                direction.Normalize();
+                CurrentDirection = direction;
+                currentPos += direction * distanceToMove;                 
             }
-
+            else
+            {
+                currentPos = next;
+            }
+            
             enemyPosition.X = currentPos.X;
             enemyPosition.Y = currentPos.Y;
         }

@@ -59,7 +59,7 @@ namespace GameProject.Scenes
             _graphicsDevice = graphicsDevice;
             Content = contentManager;
         }
-
+        // запихнуть множественные загрузки в агрегаторы?
         public override void Initialize()
         {
             base.Initialize();
